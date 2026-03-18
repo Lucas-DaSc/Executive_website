@@ -9,7 +9,7 @@
 const FOOTER_HTML = `
   <div class="footer-brand">
     <span class="nav-logo">Boussard Lucas</span>
-    <p>Consultant Executive Performance. J'accompagneles dirigeants dans leurs transformations les plus ambitieuses.</p>
+    <p>J'accompagne chaque client dans leurs transformations les plus ambitieuses.</p>
     <div class="footer-social" style="margin-top:20px">
       <a class="social-icon" href="#" title="LinkedIn">in</a>
       <a class="social-icon" href="#" title="Twitter">𝕏</a>
