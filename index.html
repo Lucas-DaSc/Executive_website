@@ -13,6 +13,8 @@
     href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+  <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 </head>
 
 <body>
@@ -29,7 +31,7 @@
               onclick="showPage('home'); return false;">Accueil</a></li>
           <li><a class="nav-link" href="#" data-page="expertise"
               onclick="showPage('expertise'); return false;">Expertise</a></li>
-          <li><a class="nav-link" href="#" data-page="cas" onclick="showPage('cas'); return false;">Réalisations</a>
+          <li><a class="nav-link" href="#" data-page="cas" onclick="showPage('cas'); return false;">Accompagnement</a>
           </li>
           <li><a class="nav-link" href="#" data-page="apropos" onclick="showPage('apropos'); return false;">À propos</a>
           </li>
@@ -47,7 +49,7 @@
   <div class="mobile-menu" id="mobileMenu">
     <a class="nav-link" href="#" onclick="showPage('home'); toggleMobile(); return false;">Accueil</a>
     <a class="nav-link" href="#" onclick="showPage('expertise'); toggleMobile(); return false;">Expertise</a>
-    <a class="nav-link" href="#" onclick="showPage('cas'); toggleMobile(); return false;">Réalisations</a>
+    <a class="nav-link" href="#" onclick="showPage('cas'); toggleMobile(); return false;">Accompagnement</a>
     <a class="nav-link" href="#" onclick="showPage('apropos'); toggleMobile(); return false;">À propos</a>
     <a class="nav-link" href="#" onclick="showPage('contact'); toggleMobile(); return false;">Contact / RDV</a>
   </div>
@@ -120,7 +122,7 @@
               <path d="M8 40V20l16-12 16 12v20H8z" />
               <path d="M18 40v-10h12v10" />
             </svg>
-            <div class="service-name">Stratégie d'optimisation</div>
+            <div class="service-name">Leadership & Décision</div>
             <div class="service-desc">Définition d'indicateurs de performance, rééquilibrage, plans de développement
               alignés sur les besoins client.</div>
           </div>
@@ -129,7 +131,7 @@
               <circle cx="24" cy="24" r="16" />
               <path d="M24 8v16l10 6" />
             </svg>
-            <div class="service-name">Transformation globale</div>
+            <div class="service-name">Transformation personnelle</div>
             <div class="service-desc">Accompagnement humain pour faire de votre vie professionnelle une aventure
               passionnante et enrichissante.</div>
           </div>
@@ -138,7 +140,7 @@
               <path d="M8 36l10-14 8 8 8-12 6 8" />
               <rect x="6" y="6" width="36" height="36" rx="2" />
             </svg>
-            <div class="service-name">Performance opérationnelle</div>
+            <div class="service-name">Performance individuelle</div>
             <div class="service-desc">Optimisation de votre temps, clarté décisionnelle et identification des
               opportunités.</div>
           </div>
@@ -371,16 +373,16 @@
   </div>
 
   <!-- ============================================================
-     PAGE : CAS / RÉALISATIONS
+     PAGE : CAS / RÉALISATIONS / PROJETS
 ============================================================ -->
   <div id="page-cas" class="page">
     <section class="page-hero">
       <div class="container page-hero-content">
-        <span class="tag reveal">Réalisations</span>
+        <span class="tag reveal">Accompagnement</span>
         <h1 class="section-title reveal">Des projets concrets,<br>des résultats <em
             style="font-style:italic">mesurables.</em></h1>
-        <p class="section-lead reveal">Découvrez comment nous avons accompagné des entreprises dans leurs
-          transformations stratégiques les plus ambitieuses.</p>
+        <p class="section-lead reveal">Découvrez les différents accompagnements que nous avons proposés pour subvenir
+          aux besoins clients.</p>
       </div>
     </section>
 
@@ -392,26 +394,25 @@
             <div class="case-visual">
               <div class="case-visual-bg cv-1"></div>
               <div class="case-visual-pattern"></div>
-              <div class="case-visual-label">Stratégie</div>
+              <div class="case-visual-label">Audit stratégique Express</div>
             </div>
             <div class="case-body">
-              <div class="case-sector">Industrie &amp; Manufacturing</div>
+              <div class="case-sector">Audit stratégique</div>
               <h3 class="case-title">Repositionnement stratégique d'un équipementier industriel</h3>
-              <p class="case-desc">Face à l'intensification de la concurrence asiatique, nous avons aidé ce groupe
-                familial à identifier et valoriser ses niches à forte valeur ajoutée, menant à une refonte complète de
-                son portefeuille de produits.</p>
+              <p class="case-desc">Réalisation d'un état des lieux afin de comprendre les problématiques et proposer des
+                solutions concrètes ou des axes d'amélioration.</p>
               <div class="case-results">
                 <div class="case-result-item">
-                  <div class="case-result-num">+34%</div>
-                  <div class="case-result-label">Marge brute</div>
+                  <div class="case-result-num">45mn</div>
+                  <div class="case-result-label">Temps d'analyse</div>
                 </div>
                 <div class="case-result-item">
-                  <div class="case-result-num">18 mois</div>
-                  <div class="case-result-label">Durée du projet</div>
+                  <div class="case-result-num">4 </div>
+                  <div class="case-result-label">Axes d'amélioration</div>
                 </div>
                 <div class="case-result-item">
-                  <div class="case-result-num">3 pays</div>
-                  <div class="case-result-label">Expansion</div>
+                  <div class="case-result-num">4</div>
+                  <div class="case-result-label">Solutions proposées</div>
                 </div>
               </div>
             </div>
@@ -419,28 +420,27 @@
 
           <div class="case-card reveal reveal-delay-1">
             <div class="case-visual">
-              <div class="case-visual-bg cv-2"></div>
+              <div class="case-visual-bg cv-4"></div>
               <div class="case-visual-pattern"></div>
-              <div class="case-visual-label">Digital</div>
+              <div class="case-visual-label">Accompagnement standard</div>
             </div>
             <div class="case-body">
-              <div class="case-sector">Services Financiers</div>
-              <h3 class="case-title">Transformation agile d'un acteur de la gestion de patrimoine</h3>
-              <p class="case-desc">Refonte complète des processus client, déploiement d'une plateforme digitale et
-                formation de 200 collaborateurs pour répondre aux nouvelles attentes des investisseurs nouvelle
-                génération.</p>
+              <div class="case-sector">Accompagnement standard</div>
+              <h3 class="case-title">Suivi hebdomadaire</h3>
+              <p class="case-desc">Suivi régulier et personnalisé des objectifs et des performances en fonction de
+                l'audit stratégique permettant de déterminer les besoins du clients.</p>
               <div class="case-results">
                 <div class="case-result-item">
-                  <div class="case-result-num">200</div>
-                  <div class="case-result-label">Collaborateurs formés</div>
+                  <div class="case-result-num">Semaine</div>
+                  <div class="case-result-label">Format</div>
                 </div>
                 <div class="case-result-item">
-                  <div class="case-result-num">-40%</div>
-                  <div class="case-result-label">Délai de traitement</div>
+                  <div class="case-result-num">2</div>
+                  <div class="case-result-label">Appels par semaine</div>
                 </div>
                 <div class="case-result-item">
-                  <div class="case-result-num">+28%</div>
-                  <div class="case-result-label">NPS client</div>
+                  <div class="case-result-num">1</div>
+                  <div class="case-result-label">Programme 360°</div>
                 </div>
               </div>
             </div>
@@ -450,25 +450,25 @@
             <div class="case-visual">
               <div class="case-visual-bg cv-3"></div>
               <div class="case-visual-pattern"></div>
-              <div class="case-visual-label">Performance</div>
+              <div class="case-visual-label">Accompagnement premium</div>
             </div>
             <div class="case-body">
-              <div class="case-sector">Distribution &amp; Retail</div>
-              <h3 class="case-title">Optimisation de la supply chain d'un distributeur national</h3>
-              <p class="case-desc">Diagnostic de bout-en-bout de la chaîne logistique, identification de 12 leviers
-                d'optimisation et déploiement d'un programme de réduction des coûts sur 24 mois.</p>
+              <div class="case-sector">Accompagnement premium</div>
+              <h3 class="case-title">Suivi personnalisé quotidien</h3>
+              <p class="case-desc">Accompagnement intensif et personnalisé des objectifs et des performances en fonction
+                de l'audit stratégique permettant de déterminer les besoins du clients.</p>
               <div class="case-results">
                 <div class="case-result-item">
-                  <div class="case-result-num">-22%</div>
-                  <div class="case-result-label">Coûts logistiques</div>
+                  <div class="case-result-num">Quotidien</div>
+                  <div class="case-result-label">Format</div>
                 </div>
                 <div class="case-result-item">
-                  <div class="case-result-num">12</div>
-                  <div class="case-result-label">Leviers identifiés</div>
+                  <div class="case-result-num">Illimité</div>
+                  <div class="case-result-label">Contact</div>
                 </div>
                 <div class="case-result-item">
-                  <div class="case-result-num">€4.2M</div>
-                  <div class="case-result-label">Économies réalisées</div>
+                  <div class="case-result-num">Quotidien</div>
+                  <div class="case-result-label">Ajustements</div>
                 </div>
               </div>
             </div>
@@ -478,25 +478,25 @@
             <div class="case-visual">
               <div class="case-visual-bg cv-4"></div>
               <div class="case-visual-pattern"></div>
-              <div class="case-visual-label">Innovation</div>
+              <div class="case-visual-label">Programme Executive Performance</div>
             </div>
             <div class="case-body">
-              <div class="case-sector">Santé &amp; Medtech</div>
-              <h3 class="case-title">Lancement d'une nouvelle ligne de produits dans le secteur MedTech</h3>
-              <p class="case-desc">Accompagnement de A à Z d'un acteur santé dans le lancement d'une gamme innovante :
-                étude de marché, go-to-market, formation de la force de vente et suivi post-lancement.</p>
+              <div class="case-sector">Programme Executive Performance</div>
+              <h3 class="case-title">Programme Executive Performance</h3>
+              <p class="case-desc">Accompagnement spécialisé et orienté executive performance pour les dirigeants et
+                décideurs à forte responsabilité (énergie, stress, décision, leadership, optimisation, performance).</p>
               <div class="case-results">
                 <div class="case-result-item">
-                  <div class="case-result-num">8 mois</div>
-                  <div class="case-result-label">De l'idée au marché</div>
+                  <div class="case-result-num">12 semaines</div>
+                  <div class="case-result-label">Durée</div>
                 </div>
                 <div class="case-result-item">
-                  <div class="case-result-num">€2.8M</div>
-                  <div class="case-result-label">CA Année 1</div>
+                  <div class="case-result-num">+20%</div>
+                  <div class="case-result-label">Performance</div>
                 </div>
                 <div class="case-result-item">
-                  <div class="case-result-num">5 pays</div>
-                  <div class="case-result-label">Déploiement</div>
+                  <div class="case-result-num">10+</div>
+                  <div class="case-result-label">Compétences</div>
                 </div>
               </div>
             </div>
@@ -553,22 +553,20 @@
               <div class="portrait-initials">BL</div>
             </div>
             <div class="portrait-deco"></div>
-            <div class="experience-badge"><strong>5+</strong><span>Années d'expertise</span></div>
+            <div class="experience-badge"><strong>+5 Années d'expérience</strong><span>en accompagnement</span></div>
           </div>
           <div class="about-text reveal reveal-delay-1">
-            <span class="tag">Notre histoire</span>
+            <span class="tag">Mon histoire</span>
             <h2 class="section-title">Une approche née de la science et du terrain.</h2>
-            <p>Je proviens d'un cursus académique complet :</p>
+            <p>Je proviens d'un cursus scientifique pluri-disciplinaire orienté sur la performance humaine :</p>
             <ul style="list-style-type: disc; padding-left: 20px"">
-              <li>Licence STAPS Éducation et Motricité</li>
-              <li>Master Psychologie, Neurosciences et Physiologie pour le Mouvement et la Performance</li>
-              <li>Doctorat Psychologie Cognitive</li><br>
+              <li>Licence STAPS Éducation et Motricité (2016-2019)</li>
+              <li>Master Psychologie, Neurosciences et Physiologie : Mouvement et Performance (2019-2021)</li>
+              <li>Doctorat Psychologie Cognitive(2021-2025)</li><br>
             </ul>
-            <p>Après plusieurs années de formation académique et de pratique professionnelle d'accompagnement de différents profils, j'ai développé une
+            <p>Après plusieurs années de formation académique et d'expérience professionnelle d'accompagnement de différents profils, j'ai développé une
               approche unique qui allie rigueur scientifique et expérience de terrain.</p>
-            <p>Basé en Ile-de-France, j'interviens pour les décideurs et les personnes souhaitant s'améliorer et
-              optimiser leur performance
-              afin d'accomplir leurs objectifs professionnels et personnels.
+            <p>Basé en Île-de-France, j’accompagne dirigeants, professionnels et particuliers désireux d’optimiser leurs performances et d’atteindre leurs objectifs, tant sur le plan personnel que professionnel.
             </p>
             <a href=" #" class="btn btn-primary" onclick="showPage('contact'); return false;">Me rencontrer <span
                 class="arrow">→</span></a>
@@ -607,8 +605,8 @@
           <div class="value-card reveal reveal-delay-3">
             <div class="value-icon">○</div>
             <div class="value-title">Confidentialité absolue</div>
-            <div class="value-text">La confiance se construit dans la discrétion. Toutes mes accompagnements sont
-              encadrées par
+            <div class="value-text">La confiance se construit dans la discrétion. Tous mes accompagnements sont
+              encadrés par
               des engagements de confidentialité stricts et personnalisés.</div>
           </div>
           <div class="value-card reveal reveal-delay-1">
@@ -683,7 +681,7 @@
               </div>
               <div>
                 <div class="contact-item-label">Email</div>
-                <div class="contact-item-val">contact@conseil.fr</div>
+                <div class="contact-item-val">lucas.bssd@gmail.com</div>
               </div>
             </div>
             <div class="contact-item">
@@ -701,9 +699,9 @@
             <div class="rdv-card">
               <h4>Réserver un créneau</h4>
               <p>Préférez un appel directement ? Choisissez un moment qui vous convient dans notre agenda.</p>
-              <a href="#" class="btn btn-white" style="padding:10px 20px;font-size:0.8rem;"
-                onclick="alert('Intégration Calendly ici'); return false;">Voir les disponibilités <span
-                  class="arrow">→</span></a>
+              <a href="" class="btn btn-white" style="padding:10px 20px;font-size:0.8rem;"
+                onclick="Calendly.initPopupWidget({url: 'https://calendly.com/lucas-bssd/30min'}); return false;">Voir
+                les disponibilités <span class="arrow">→</span></a>
             </div>
           </div>
 
@@ -718,7 +716,7 @@
               </div>
               <div class="form-row">
                 <div class="form-group"><label>Email professionnel *</label><input type="email" id="email"
-                    placeholder="j.dupont@entreprise.fr" required /></div>
+                    placeholder="mail@entreprise.fr" required /></div>
                 <div class="form-group"><label>Entreprise</label><input type="text" id="company"
                     placeholder="Votre société" /></div>
               </div>
@@ -726,9 +724,9 @@
                 <label>Thématique</label>
                 <select id="topic">
                   <option value="">Sélectionnez une thématique</option>
-                  <option>Stratégie d'entreprise</option>
-                  <option>Transformation digitale</option>
-                  <option>Performance opérationnelle</option>
+                  <option>Leadership</option>
+                  <option>Transformation personnelle</option>
+                  <option>Performance individuelle</option>
                   <option>Autre sujet</option>
                 </select>
               </div>

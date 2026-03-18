@@ -20,7 +20,7 @@ const FOOTER_HTML = `
     <h5>Navigation</h5>
     <a href="#" onclick="showPage('home');return false;">Accueil</a>
     <a href="#" onclick="showPage('expertise');return false;">Expertise</a>
-    <a href="#" onclick="showPage('cas');return false;">Réalisations</a>
+    <a href="#" onclick="showPage('cas');return false;">Accompagnement</a>
     <a href="#" onclick="showPage('apropos');return false;">À propos</a>
     <a href="#" onclick="showPage('contact');return false;">Contact</a>
   </div>
@@ -174,13 +174,29 @@ function submitForm() {
     return;
   }
 
-  // TODO : envoyer les données au backend ici
-  // Exemple avec Formspree :
-  // fetch('https://formspree.io/f/VOTRE_ID', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ firstName, lastName, email, message })
-  // });
+  // Envoi via Formspree
+  fetch('https://formspree.io/f/mqeywbqe', { // ← remplace par ton URL Formspree
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      firstName,
+      lastName,
+      email,
+      message
+    })
+  })
+    .then(response => {
+      if (response.ok) {
+        // Masquer le formulaire et afficher le succès
+        document.getElementById('formContent').style.display = 'none';
+        document.getElementById('formSuccess').classList.add('show');
+      } else {
+        alert("Erreur lors de l'envoi, merci de réessayer.");
+      }
+    })
+    .catch(() => {
+      alert("Erreur lors de l'envoi, merci de réessayer.");
+    });
 
   // Masquer le formulaire et afficher le message de succès
   const formContent = document.getElementById('formContent');
