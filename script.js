@@ -35,7 +35,6 @@ const FOOTER_HTML = `
     <h5>Contact</h5>
     <a href="mailto:lucas.bssd@gmail.com">lucas.bssd@gmail.com</a>
     <a href="tel:+33647250737">+33 6 47 25 07 37</a>
-    <a href="#">15 Av. Montaigne, Paris</a>
   </div>
 `;
 
