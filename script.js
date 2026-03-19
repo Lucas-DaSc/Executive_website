@@ -20,6 +20,7 @@ const FOOTER_HTML = `
     <h5>Navigation</h5>
     <a href="#" onclick="showPage('home');return false;">Accueil</a>
     <a href="#" onclick="showPage('expertise');return false;">Expertise</a>
+    <a href="#" onclick="showPage('methodologie');return false;">Méthodologie</a>
     <a href="#" onclick="showPage('cas');return false;">Accompagnement</a>
     <a href="#" onclick="showPage('apropos');return false;">À propos</a>
     <a href="#" onclick="showPage('contact');return false;">Contact</a>
@@ -32,8 +33,8 @@ const FOOTER_HTML = `
   </div>
   <div class="footer-col">
     <h5>Contact</h5>
-    <a href="mailto:contact@stratum-conseil.fr">contact@stratum-conseil.fr</a>
-    <a href="tel:+33123456789">+33 1 23 45 67 89</a>
+    <a href="mailto:lucas.bssd@gmail.com">lucas.bssd@gmail.com</a>
+    <a href="tel:+33647250737">+33 6 47 25 07 37</a>
     <a href="#">15 Av. Montaigne, Paris</a>
   </div>
 `;
