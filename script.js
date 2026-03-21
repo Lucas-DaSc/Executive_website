@@ -12,7 +12,6 @@ const FOOTER_HTML = `
     <p>J'accompagne chaque client dans leurs transformations les plus ambitieuses.</p>
     <div class="footer-social" style="margin-top:20px">
       <a class="social-icon" href="#" title="LinkedIn">in</a>
-      <a class="social-icon" href="#" title="Twitter">𝕏</a>
       <a class="social-icon" href="#" title="Instagram">IG</a>
     </div>
   </div>
@@ -33,8 +32,8 @@ const FOOTER_HTML = `
   </div>
   <div class="footer-col">
     <h5>Contact</h5>
-    <a href="mailto:lucas.bssd@gmail.com">lucas.bssd@gmail.com</a>
-    <a href="tel:+33647250737">+33 6 47 25 07 37</a>
+    <a href="mailto:lboussard.lab@gmail.com">lboussard.lab@gmail.com</a>
+    <a href="tel:+33647250737">+33 6 11 62 45 64</a>
   </div>
 `;
 
@@ -175,7 +174,7 @@ function submitForm() {
   }
 
   // Envoi via Formspree
-  fetch('https://formspree.io/f/mqeywbqe', { // ← remplace par ton URL Formspree
+  fetch('https://formspree.io/f/xnjgyvog', { // ← remplace par ton URL Formspree
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

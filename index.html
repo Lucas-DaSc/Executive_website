@@ -28,17 +28,19 @@
         <a class="nav-logo" href="#" onclick="showPage('home'); return false;"><img src="Logo.png" alt="Logo"
             style="height: 60px; border-radius: 100px;"></a>
         <ul class="nav-links">
-          <li><a class="nav-link active-link" href="#" data-page="home"
+          <li><a class="nav-link active-link" href="#page-home" data-page="home"
               onclick="showPage('home'); return false;">Accueil</a></li>
-          <li><a class="nav-link" href="#" data-page="expertise"
+          <li><a class="nav-link" href="#page-expertise" data-page="expertise"
               onclick="showPage('expertise'); return false;">Expertise</a></li>
-          <li><a class="nav-link" href="#" data-page="methodologie"
+          <li><a class="nav-link" href="#page-methodologie" data-page="methodologie"
               onclick="showPage('methodologie'); return false;">Méthodologie</a></li>
-          <li><a class="nav-link" href="#" data-page="cas" onclick="showPage('cas'); return false;">Accompagnement</a>
+          <li><a class="nav-link" href="#page-cas" data-page="cas"
+              onclick="showPage('cas'); return false;">Accompagnement</a>
           </li>
-          <li><a class="nav-link" href="#" data-page="apropos" onclick="showPage('apropos'); return false;">À propos</a>
+          <li><a class="nav-link" href="#page-apropos" data-page="apropos"
+              onclick="showPage('apropos'); return false;">À propos</a>
           </li>
-          <li><a class="nav-link btn btn-outline btn-ghost nav-cta" href="#" data-page="contact"
+          <li><a class="nav-link btn btn-outline btn-ghost nav-cta" href="#page-contact" data-page="contact"
               onclick="showPage('contact'); return false;">Prendre RDV</a></li>
         </ul>
         <button class="burger" id="burger" aria-label="Menu" onclick="toggleMobile()">
@@ -50,12 +52,14 @@
 
   <!-- Menu mobile -->
   <div class="mobile-menu" id="mobileMenu">
-    <a class="nav-link" href="#" onclick="showPage('home'); toggleMobile(); return false;">Accueil</a>
-    <a class="nav-link" href="#" onclick="showPage('expertise'); toggleMobile(); return false;">Expertise</a>
-    <a class="nav-link" href="#" onclick="showPage('methodologie'); toggleMobile(); return false;">Méthodologie</a>
-    <a class="nav-link" href="#" onclick="showPage('cas'); toggleMobile(); return false;">Accompagnement</a>
-    <a class="nav-link" href="#" onclick="showPage('apropos'); toggleMobile(); return false;">À propos</a>
-    <a class="nav-link" href="#" onclick="showPage('contact'); toggleMobile(); return false;">Contact</a>
+    <a class="nav-link" href="#page-home" onclick="showPage('home'); toggleMobile(); return false;">Accueil</a>
+    <a class="nav-link" href="#page-expertise"
+      onclick="showPage('expertise'); toggleMobile(); return false;">Expertise</a>
+    <a class="nav-link" href="#page-methodologie"
+      onclick="showPage('methodologie'); toggleMobile(); return false;">Méthodologie</a>
+    <a class="nav-link" href="#page-cas" onclick="showPage('cas'); toggleMobile(); return false;">Accompagnement</a>
+    <a class="nav-link" href="#page-apropos" onclick="showPage('apropos'); toggleMobile(); return false;">À propos</a>
+    <a class="nav-link" href="#page-contact" onclick="showPage('contact'); toggleMobile(); return false;">Contact</a>
   </div>
 
   <!-- ============================================================
@@ -71,7 +75,7 @@
           <div class="hero-content">
             <div class="hero-eyebrow reveal">Conseil et accompagnement</div>
             <h1 class="hero-title reveal reveal-delay-1">
-              Transformer la complexité en avantage décisif.
+              Complexité maîtrisée, performance assurée.
             </h1>
             <p class="hero-sub reveal reveal-delay-2">
               J'accompagne les dirigeants, décideurs et professionnels dans leur objectifs de transformation, en
@@ -104,7 +108,7 @@
           <div class="hero-stat-label">Années d'expertise</div>
         </div>
         <div class="hero-stat">
-          <div class="hero-stat-num">99%</div>
+          <div class="hero-stat-num">95%</div>
           <div class="hero-stat-label">Clients satisfaits</div>
         </div>
       </div>
@@ -331,38 +335,6 @@
       </div>
     </section>
 
-    <section class="methodo">
-      <div class="container">
-        <span class="tag reveal">Méthodologie</span>
-        <h2 class="section-title reveal" style="color:var(--c-white)">Ma façon de travailler.</h2>
-        <div class="methodo-steps">
-          <div class="methodo-step reveal">
-            <div class="step-num">01</div>
-            <div class="step-title">Écoute</div>
-            <div class="step-desc">Immersion dans votre réalité. Entretiens, questionnaires, données et observations
-              terrain. Comprendre avant d'agir.</div>
-          </div>
-          <div class="methodo-step reveal reveal-delay-1">
-            <div class="step-num">02</div>
-            <div class="step-title">Analyse</div>
-            <div class="step-desc">Synthèse des constats, identification des leviers prioritaires, co-construction de
-              vos objectifs.</div>
-          </div>
-          <div class="methodo-step reveal reveal-delay-2">
-            <div class="step-num">03</div>
-            <div class="step-title">Conception</div>
-            <div class="step-desc">Feuille de route détaillée, planification sur-mesure, indicateurs de succès et
-              d'amélioration.</div>
-          </div>
-          <div class="methodo-step reveal reveal-delay-3">
-            <div class="step-num">04</div>
-            <div class="step-title">Suivi</div>
-            <div class="step-desc">Accompagnement opérationnel, ajustement en continu, redéfinition des objectifs.</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <footer>
       <div class="container">
         <div class="footer-main" id="footer-expertise"></div>
@@ -481,13 +453,13 @@
             <div class="case-visual">
               <div class="case-visual-bg cv-1"></div>
               <div class="case-visual-pattern"></div>
-              <div class="case-visual-label">Audit stratégique Express</div>
+              <div class="case-visual-label">Audit stratégique</div>
             </div>
             <div class="case-body">
               <div class="case-sector">Audit stratégique</div>
-              <h3 class="case-title">Repositionnement stratégique d'un équipementier industriel</h3>
-              <p class="case-desc">Réalisation d'un état des lieux afin de comprendre les problématiques et proposer des
-                solutions concrètes ou des axes d'amélioration.</p>
+              <h3 class="case-title">Diagnostic stratégique personnalisé</h3>
+              <p class="case-desc">Analyse complète de votre situation pour identifier les obstacles clés et proposer
+                des solutions pragmatiques directement applicables.</p>
               <div class="case-results">
                 <div class="case-result-item">
                   <div class="case-result-num">45mn</div>
@@ -768,7 +740,7 @@
               </div>
               <div>
                 <div class="contact-item-label">Email</div>
-                <div class="contact-item-val">lucas.bssd@gmail.com</div>
+                <div class="contact-item-val">lboussard.lab@gmail.com</div>
               </div>
             </div>
             <div class="contact-item">
@@ -780,14 +752,14 @@
               </div>
               <div>
                 <div class="contact-item-label">Téléphone</div>
-                <div class="contact-item-val">+33 1 23 45 67 89</div>
+                <div class="contact-item-val">+33 6 11 62 45 64</div>
               </div>
             </div>
             <div class="rdv-card">
               <h4>Réserver un créneau</h4>
               <p>Préférez un appel directement ? Choisissez un moment qui vous convient dans notre agenda.</p>
               <a href="" class="btn btn-white" style="padding:10px 20px;font-size:0.8rem;"
-                onclick="Calendly.initPopupWidget({url: 'https://calendly.com/lucas-bssd/30min'}); return false;">Voir
+                onclick="Calendly.initPopupWidget({url: 'https://calendly.com/lboussard-lab/audit_strategique'}); return false;">Voir
                 les disponibilités <span class="arrow">→</span></a>
             </div>
           </div>
