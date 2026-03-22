@@ -11,8 +11,8 @@ const FOOTER_HTML = `
     <span class="nav-logo">Boussard Lucas</span>
     <p>J'accompagne chaque client dans leurs transformations les plus ambitieuses.</p>
     <div class="footer-social" style="margin-top:20px">
-      <a class="social-icon" href="#" title="LinkedIn">in</a>
-      <a class="social-icon" href="#" title="Instagram">IG</a>
+      <a class="social-icon" href="https://www.linkedin.com/in/lucas-boussard-consultant/" title="LinkedIn">in</a>
+      <a class="social-icon" href="https://www.instagram.com/lucasboussard_/" title="Instagram">IG</a>
     </div>
   </div>
   <div class="footer-col">
