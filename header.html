@@ -1,0 +1,33 @@
+<!-- ============================================================
+     NAVBAR
+============================================================ -->
+<nav id="navbar" class="dark-hero">
+    <div class="container">
+        <div class="nav-inner">
+            <a class="nav-logo" href="index.html">
+                <img src="assets/images/Logo.png" alt="Logo" style="height: 60px; border-radius: 100px;"></a>
+            <ul class="nav-links">
+                <li><a class="nav-link" href="index.html">Accueil</a></li>
+                <li><a class="nav-link" href="expertise.html">Expertise</a></li>
+                <li><a class="nav-link" href="methodologie.html">Méthodologie</a></li>
+                <li><a class="nav-link" href="accompagnement.html">Accompagnement</a></li>
+                <li><a class="nav-link" href="apropos.html">À propos</a></li>
+                <li><a class="nav-link btn btn-outline" href="contact.html">Prendre RDV</a></li>
+            </ul>
+            <button class="burger" id="burger" aria-label="Menu" onclick="toggleMobile()">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Menu mobile -->
+<div class="mobile-menu" id="mobileMenu">
+    <a class="nav-link" href="index.html" onclick="showPage('home'); toggleMobile();">Accueil</a>
+    <a class="nav-link" href="expertise.html" onclick="showPage('expertise'); toggleMobile();">Expertise</a>
+    <a class="nav-link" href="methodologie.html" onclick="showPage('methodologie'); toggleMobile();">Méthodologie</a>
+    <a class="nav-link" href="accompagnement.html"
+        onclick="showPage('accompagnement'); toggleMobile();">Accompagnement</a>
+    <a class="nav-link" href="apropos.html" onclick="showPage('apropos'); toggleMobile();">À propos</a>
+    <a class="nav-link" href="contact.html" onclick="showPage('contact'); toggleMobile();">Contact</a>
+</div>

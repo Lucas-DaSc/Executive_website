@@ -215,13 +215,9 @@ ul {
 }
 
 /* --- Pages SPA --- */
-.page {
-   display: none;
-   min-height: 100vh;
-}
-
-.page.active {
-   display: block;
+.reveal {
+   opacity: 1 !important;
+   visibility: visible !important;
 }
 
 /* ============================================================
@@ -563,7 +559,8 @@ ul {
    display: grid;
    grid-template-columns: repeat(3, 1fr);
    gap: 2px;
-   background: var(--c-grey-200);
+   background: var(--c-grey-000);
+   align-content: start;
 }
 
 .service-card {
@@ -934,7 +931,7 @@ ul {
    display: grid;
    grid-template-columns: repeat(2, 1fr);
    gap: 32px;
-   margin-top: 64px;
+   margin-top: 0px;
 }
 
 .case-card {
@@ -994,7 +991,7 @@ ul {
    position: absolute;
    top: 20px;
    left: 20px;
-   font-size: 10px;
+   font-size: 18px;
    font-weight: 500;
    letter-spacing: .15em;
    text-transform: uppercase;

@@ -1,49 +1,29 @@
 /* ============================================================
-   STRATUM — Cabinet de Conseil Stratégique
-   Script principal (SPA routing, navbar, animations, formulaire)
-   ============================================================ */
-
-/* ============================================================
-   FOOTER HTML partagé (injecté dans chaque page)
+   NAVBAR — INJECTION HTML ET COMPORTEMENT
 ============================================================ */
-const FOOTER_HTML = `
-  <div class="footer-brand">
-    <span class="nav-logo">Boussard Lucas</span>
-    <p>J'accompagne chaque client dans leurs transformations les plus ambitieuses.</p>
-    <div class="footer-social" style="margin-top:20px">
-      <a class="social-icon" href="https://www.linkedin.com/in/lucas-boussard-consultant/" title="LinkedIn">in</a>
-      <a class="social-icon" href="https://www.instagram.com/lucasboussard_/" title="Instagram">IG</a>
-    </div>
-  </div>
-  <div class="footer-col">
-    <h5>Navigation</h5>
-    <a href="#" onclick="showPage('home');return false;">Accueil</a>
-    <a href="#" onclick="showPage('expertise');return false;">Expertise</a>
-    <a href="#" onclick="showPage('methodologie');return false;">Méthodologie</a>
-    <a href="#" onclick="showPage('cas');return false;">Accompagnement</a>
-    <a href="#" onclick="showPage('apropos');return false;">À propos</a>
-    <a href="#" onclick="showPage('contact');return false;">Contact</a>
-  </div>
-  <div class="footer-col">
-    <h5>Expertises</h5>
-    <a href="#" onclick="showPage('expertise');return false;">Leadership </a>
-    <a href="#" onclick="showPage('expertise');return false;">Performance individuelle</a>
-    <a href="#" onclick="showPage('expertise');return false;">Transformation personelle</a>
-  </div>
-  <div class="footer-col">
-    <h5>Contact</h5>
-    <a href="mailto:lboussard.lab@gmail.com">lboussard.lab@gmail.com</a>
-    <a href="tel:+33647250737">+33 6 11 62 45 64</a>
-  </div>
-`;
+document.addEventListener("DOMContentLoaded", function () {
+  // Charger le Header
+  const headerPlaceholder = document.getElementById('header-placeholder');
+  if (headerPlaceholder) {
+    fetch('header.html')
+      .then(response => response.text())
+      .then(data => {
+        headerPlaceholder.innerHTML = data;
+        // Si vous avez une fonction pour le menu burger, lancez-la ici
+        if (typeof setupBurger === "function") setupBurger();
+      });
+  }
 
-/** Injecte le footer dans toutes les pages au chargement */
-function injectFooters() {
-  document.querySelectorAll('[id^="footer-"]').forEach(el => {
-    el.innerHTML = FOOTER_HTML;
-  });
-}
-
+  // Charger le Footer
+  const footerPlaceholder = document.getElementById('footer-placeholder');
+  if (footerPlaceholder) {
+    fetch('footer.html')
+      .then(response => response.text())
+      .then(data => {
+        footerPlaceholder.innerHTML = data;
+      });
+  }
+});
 /* ============================================================
    NAVIGATION SPA
 ============================================================ */

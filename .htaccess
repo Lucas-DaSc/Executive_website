@@ -1,0 +1,13 @@
+# Activation de la réécriture d'URL
+RewriteEngine On
+
+# 1. Supprimer le .html de l'URL par une redirection 301 (SEO Friendly)
+# Si on tape /contact.html, on est redirigé vers /contact
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /.*\.html\ HTTP/
+RewriteRule ^(.*)\.html$ /$1 [R=301,L]
+
+# 2. Permettre au serveur de lire le fichier .html même si l'extension n'est pas dans l'URL
+# Si l'utilisateur demande /contact, le serveur cherche en interne /contact.html
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.html -f
+RewriteRule ^(.*)$ $1.html [NC,L]

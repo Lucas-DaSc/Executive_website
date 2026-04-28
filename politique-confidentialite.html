@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Boussard Lucas — Politique de confidentialité</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --c-black: #000000;
+      --c-white: #FFFFFF;
+      --c-blue-deep: #0D3B66;
+      --c-blue-mid: #1A5496;
+      --c-blue-sky: #3A9AD9;
+      --c-blue-pale: #D6EAF8;
+      --c-grey-100: #F5F5F5;
+      --c-grey-200: #E8E8E8;
+      --c-grey-400: #AAAAAA;
+      --c-grey-600: #666666;
+      --c-grey-800: #1A1A1A;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --nav-h: 72px;
+      --radius: 3px;
+      --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--c-white);
+      color: var(--c-black);
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    /* NAVBAR */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, .96);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 1px 0 var(--c-grey-200);
+      transition: background var(--transition), box-shadow var(--transition);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1160px;
+      margin-inline: auto;
+      padding-inline: 32px;
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      color: var(--c-blue-deep);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      align-items: center;
+    }
+
+    .nav-link {
+      font-size: .82rem;
+      font-weight: 400;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--c-grey-800);
+      position: relative;
+      transition: color var(--transition);
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--c-blue-sky);
+      transition: width var(--transition);
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 22px;
+      font-size: .78rem;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      border-radius: var(--radius);
+      transition: var(--transition);
+      cursor: pointer;
+      border: none;
+      font-family: var(--font-body);
+    }
+
+    .btn-primary {
+      background: var(--c-blue-deep);
+      color: var(--c-white);
+    }
+
+    .btn-primary:hover {
+      background: var(--c-blue-mid);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(13, 59, 102, .25);
+    }
+
+    .burger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      padding: 8px;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    .burger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--c-grey-800);
+      transition: var(--transition);
+    }
+
+    .burger.open span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .burger.open span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .burger.open span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    .mobile-menu {
+      position: fixed;
+      top: var(--nav-h);
+      left: 0;
+      right: 0;
+      background: var(--c-white);
+      border-top: 1px solid var(--c-grey-200);
+      padding: 24px 32px 32px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transform: translateY(-120%);
+      transition: transform var(--transition);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, .08);
+    }
+
+    .mobile-menu.open {
+      transform: translateY(0);
+    }
+
+    .mobile-menu .nav-link {
+      font-size: 1rem;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--c-grey-200);
+    }
+
+    .mobile-menu .nav-link::after {
+      display: none;
+    }
+
+    /* PAGE HERO */
+    .page-hero {
+      padding: 140px 0 60px;
+      background: var(--c-blue-deep);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 80% 60%, rgba(58, 154, 217, .15), transparent);
+    }
+
+    .page-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(255, 255, 255, .03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .03) 1px, transparent 1px);
+      background-size: 80px 80px;
+    }
+
+    .page-hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--c-blue-sky);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 32px;
+      height: 1px;
+      background: var(--c-blue-sky);
+    }
+
+    .page-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 4vw, 3.4rem);
+      font-weight: 300;
+      color: var(--c-white);
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    .page-hero-date {
+      font-size: .85rem;
+      color: rgba(255, 255, 255, .45);
+      letter-spacing: .05em;
+    }
+
+    /* LEGAL TABS */
+    .legal-tabs-wrap {
+      background: var(--c-white);
+      border-bottom: 1px solid var(--c-grey-200);
+      position: sticky;
+      top: var(--nav-h);
+      z-index: 100;
+    }
+
+    .legal-tabs {
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+    }
+
+    .legal-tab {
+      font-size: .78rem;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 16px 24px;
+      color: var(--c-grey-400);
+      border-bottom: 2px solid transparent;
+      transition: color var(--transition), border-color var(--transition);
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .legal-tab:hover {
+      color: var(--c-blue-deep);
+    }
+
+    .legal-tab.active {
+      color: var(--c-blue-deep);
+      border-bottom-color: var(--c-blue-sky);
+    }
+
+    /* LEGAL LAYOUT */
+    .legal-wrap {
+      padding: 64px 0 100px;
+    }
+
+    .legal-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .legal-sidebar {
+      position: sticky;
+      top: calc(var(--nav-h) + 56px);
+    }
+
+    .sidebar-label {
+      font-size: .7rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--c-grey-400);
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+
+    .sidebar-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: var(--radius);
+      font-size: .82rem;
+      color: var(--c-grey-600);
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition);
+      border: none;
+      background: none;
+      text-align: left;
+      font-family: var(--font-body);
+    }
+
+    .sidebar-item:hover {
+      background: var(--c-blue-pale);
+      color: var(--c-blue-deep);
+    }
+
+    .sidebar-item.active {
+      background: var(--c-blue-pale);
+      color: var(--c-blue-deep);
+      font-weight: 500;
+    }
+
+    .sidebar-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--c-grey-200);
+      flex-shrink: 0;
+      transition: background var(--transition);
+    }
+
+    .sidebar-item.active .sidebar-dot,
+    .sidebar-item:hover .sidebar-dot {
+      background: var(--c-blue-sky);
+    }
+
+    .legal-content {
+      min-width: 0;
+    }
+
+    .legal-article {
+      padding: 28px 0;
+      border-bottom: 1px solid var(--c-grey-200);
+    }
+
+    .legal-article:last-child {
+      border-bottom: none;
+    }
+
+    .article-num {
+      font-size: .7rem;
+      font-weight: 500;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--c-blue-sky);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .article-title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 400;
+      color: var(--c-blue-deep);
+      margin-bottom: 14px;
+      padding-left: 14px;
+      border-left: 2px solid var(--c-blue-sky);
+      line-height: 1.2;
+    }
+
+    .article-body {
+      padding-left: 14px;
+    }
+
+    .article-body p {
+      font-size: .92rem;
+      color: var(--c-grey-600);
+      line-height: 1.8;
+      margin-bottom: 10px;
+    }
+
+    .article-body p:last-child {
+      margin-bottom: 0;
+    }
+
+    .article-body ul {
+      padding-left: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .article-body li {
+      font-size: .92rem;
+      color: var(--c-grey-600);
+      line-height: 1.7;
+      display: flex;
+      gap: 10px;
+      align-items: baseline;
+    }
+
+    .article-body li::before {
+      content: '—';
+      color: var(--c-blue-sky);
+      flex-shrink: 0;
+      font-size: .8rem;
+    }
+
+    .article-body a {
+      color: var(--c-blue-mid);
+      border-bottom: 1px solid var(--c-blue-pale);
+      transition: border-color var(--transition), color var(--transition);
+    }
+
+    .article-body a:hover {
+      color: var(--c-blue-sky);
+      border-bottom-color: var(--c-blue-sky);
+    }
+
+    .article-body strong {
+      color: var(--c-blue-deep);
+      font-weight: 500;
+    }
+
+    /* RGPD RIGHTS GRID */
+    .rights-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .right-card {
+      background: var(--c-grey-100);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      border-left: 2px solid var(--c-blue-pale);
+    }
+
+    .right-card strong {
+      display: block;
+      font-size: .82rem;
+      color: var(--c-blue-deep);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .right-card span {
+      font-size: .8rem;
+      color: var(--c-grey-600);
+      line-height: 1.5;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--c-grey-800);
+      color: rgba(255, 255, 255, .6);
+    }
+
+    .footer-main {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      padding: 72px 0 56px;
+    }
+
+    .footer-brand .footer-logo {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      letter-spacing: .12em;
+      color: var(--c-white);
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .footer-brand p {
+      font-size: .85rem;
+      line-height: 1.75;
+      max-width: 260px;
+    }
+
+    .footer-col h5 {
+      font-size: .75rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--c-white);
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .footer-col a {
+      display: block;
+      font-size: .85rem;
+      color: rgba(255, 255, 255, .5);
+      margin-bottom: 10px;
+      transition: color var(--transition);
+    }
+
+    .footer-col a:hover {
+      color: var(--c-blue-sky);
+    }
+
+    .footer-col a.active-page {
+      color: var(--c-blue-sky);
+    }
+
+    .footer-bottom {
+      padding: 20px 0;
+      border-top: 1px solid rgba(255, 255, 255, .06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: .78rem;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-legal {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-legal a {
+      color: rgba(255, 255, 255, .4);
+      transition: color var(--transition);
+    }
+
+    .footer-legal a:hover,
+    .footer-legal a.active-page {
+      color: var(--c-blue-sky);
+    }
+
+    @media (max-width: 900px) {
+      .legal-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .legal-sidebar {
+        position: static;
+      }
+
+      .sidebar-list {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .sidebar-item {
+        font-size: .75rem;
+        padding: 6px 10px;
+      }
+
+      .rights-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      :root {
+        --nav-h: 60px;
+      }
+
+      .container {
+        padding-inline: 20px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .burger {
+        display: flex;
+      }
+
+      .footer-main {
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+      }
+
+      .legal-tab {
+        padding: 14px 16px;
+        font-size: .72rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .footer-main {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <div class="container">
+      <div class="nav-inner">
+        <a href="index.html" class="nav-logo">
+          <img src="assets/images/Logo.png" alt="Logo"
+            style="height: 60px; margin-top: 15px; border-radius: 100px;"></a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html">Accueil</a>
+          <a class="nav-link" href="expertise.html">Expertise</a>
+          <a class="nav-link" href="methodologie.html">Méthodologie</a>
+          <a class="nav-link" href="accompagnement.html">Accompagnement</a>
+          <a class="nav-link" href="apropos.html">À propos</a></li>
+          <a class="nav-link btn btn-outline" href="contact.html">Prendre RDV</a>
+        </div>
+        <button class="burger" id="burger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html" class="nav-link">Accueil</a>
+    <a href="expertise.html" class="nav-link">Expertise</a>
+    <a href="methodologie.html" class="nav-link">Méthodologie</a>
+    <a href="accompagnement.html" class="nav-link">Accompagnement</a>
+    <a href="apropos.html" class="nav-link">À propos</a>
+    <a href="contact.html" class="nav-link">Contact</a>
+    <a href="contact.html" class="btn btn-primary" style="width:fit-content">Prendre RDV</a>
+  </div>
+
+  <section class="page-hero">
+    <div class="container">
+      <div class="page-hero-content">
+        <div class="hero-eyebrow">Légal</div>
+        <h1>Politique de confidentialité</h1>
+        <p class="page-hero-date">Dernière mise à jour : avril 2026</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="legal-tabs-wrap">
+    <div class="container">
+      <div class="legal-tabs">
+        <a href="mentions-legales.html" class="legal-tab">Mentions légales</a>
+        <a href="politique-confidentialite.html" class="legal-tab active">Confidentialité</a>
+        <a href="cgv.html" class="legal-tab">CGV</a>
+        <a href="cgu.html" class="legal-tab">CGU</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="legal-wrap">
+    <div class="container">
+      <div class="legal-layout">
+        <aside class="legal-sidebar">
+          <p class="sidebar-label">Sommaire</p>
+          <div class="sidebar-list" id="sidebar">
+            <button class="sidebar-item active" data-target="art-1"><span class="sidebar-dot"></span>Responsable du
+              traitement</button>
+            <button class="sidebar-item" data-target="art-2"><span class="sidebar-dot"></span>Données
+              collectées</button>
+            <button class="sidebar-item" data-target="art-3"><span class="sidebar-dot"></span>Finalités du
+              traitement</button>
+            <button class="sidebar-item" data-target="art-4"><span class="sidebar-dot"></span>Durée de
+              conservation</button>
+            <button class="sidebar-item" data-target="art-5"><span class="sidebar-dot"></span>Partage des
+              données</button>
+            <button class="sidebar-item" data-target="art-6"><span class="sidebar-dot"></span>Cookies</button>
+            <button class="sidebar-item" data-target="art-7"><span class="sidebar-dot"></span>Vos droits (RGPD)</button>
+            <button class="sidebar-item" data-target="art-8"><span class="sidebar-dot"></span>Sécurité</button>
+          </div>
+        </aside>
+
+        <div class="legal-content" id="legalContent">
+
+          <div class="legal-article" id="art-1">
+            <span class="article-num">Article 1</span>
+            <h2 class="article-title">Responsable du traitement</h2>
+            <div class="article-body">
+              <p>Lucas Boussard est responsable du traitement de vos données personnelles collectées via ce site. Pour
+                toute question : <a href="mailto:lboussard.lab@gmail.com">lboussard.lab@gmail.com</a></p>
+            </div>
+          </div>
+
+          <div class="legal-article" id="art-2">
+            <span class="article-num">Article 2</span>
+            <h2 class="article-title">Données collectées</h2>
+            <div class="article-body">
+              <p>Lors de l'utilisation du formulaire de contact, les données suivantes sont collectées :</p>
+              <ul>
+                <li>Prénom et nom</li>
+                <li>Adresse e-mail</li>
+                <li>Numéro de téléphone (si fourni)</li>
+                <li>Nom de l'entreprise (si fourni)</li>
+                <li>Contenu du message</li>
+              </ul>
+              <p>Ces données sont collectées avec votre consentement explicite, dans le cadre d'une prise de contact
+                volontaire.</p>
+            </div>
+          </div>
+
+          <div class="legal-article" id="art-3">
+            <span class="article-num">Article 3</span>
+            <h2 class="article-title">Finalités du traitement</h2>
+            <div class="article-body">
+              <p>Vos données sont utilisées exclusivement pour :</p>
+              <ul>
+                <li>Répondre à vos demandes de contact</li>
+                <li>Organiser des échanges ou rendez-vous</li>
+                <li>Assurer le suivi de votre accompagnement</li>
+              </ul>
+              <p>Elles ne sont en aucun cas utilisées à des fins commerciales tierces ou de prospection non sollicitée.
+              </p>
+            </div>
+          </div>
+
+          <div class="legal-article" id="art-4">
+            <span class="article-num">Article 4</span>
+            <h2 class="article-title">Durée de conservation</h2>
+            <div class="article-body">
+              <p>Vos données sont conservées pendant une durée maximale de 3 ans à compter de votre dernier contact,
+                conformément aux recommandations de la CNIL. Au-delà, elles sont supprimées ou anonymisées.</p>
+            </div>
+          </div>
+
+          <div class="legal-article" id="art-5">
+            <span class="article-num">Article 5</span>
+            <h2 class="article-title">Partage des données</h2>
+            <div class="article-body">
+              <p>Vos données ne sont jamais vendues, louées ou partagées avec des tiers à des fins commerciales. Elles
+                peuvent être transmises à des prestataires techniques (hébergement, messagerie) dans le strict cadre de
+                la prestation de services, sous couvert d'engagements de confidentialité.</p>
+            </div>
+          </div>
+
+          <div class="legal-article" id="art-6">
+            <span class="article-num">Article 6</span>
+            <h2 class="article-title">Cookies</h2>
+            <div class="article-body">
+              <p>Ce site utilise des cookies techniques indispensables à son fonctionnement. Des cookies tiers peuvent
+                être déposés par des services intégrés (ex. : Calendly). Vous pouvez configurer votre navigateur pour
+                refuser les cookies, bien que cela puisse affecter certaines fonctionnalités.</p>
+            </div>
+          </div>
+
+          <div class="legal-article" id="art-7">
+            <span class="article-num">Article 7</span>
+            <h2 class="article-title">Vos droits (RGPD)</h2>
+            <div class="article-body">
+              <p>Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez des droits
+                suivants :</p>
+              <div class="rights-grid">
+                <div class="right-card"><strong>Droit d'accès</strong><span>Obtenir une copie de vos données
+                    personnelles</span></div>
+                <div class="right-card"><strong>Droit de rectification</strong><span>Corriger des informations
+                    inexactes</span></div>
+                <div class="right-card"><strong>Droit à l'effacement</strong><span>Demander la suppression de vos
+                    données</span></div>
+                <div class="right-card"><strong>Droit à la portabilité</strong><span>Recevoir vos données dans un format
+                    structuré</span></div>
+                <div class="right-card"><strong>Droit d'opposition</strong><span>S'opposer à certains traitements</span>
+                </div>
+              </div>
+              <p>Pour exercer ces droits, contactez : <a
+                  href="mailto:lboussard.lab@gmail.com">lboussard.lab@gmail.com</a></p>
+              <p>En cas de litige non résolu, vous pouvez introduire une réclamation auprès de la <a
+                  href="https://www.cnil.fr" target="_blank" rel="noopener">CNIL</a>.</p>
+            </div>
+          </div>
+
+          <div class="legal-article" id="art-8">
+            <span class="article-num">Article 8</span>
+            <h2 class="article-title">Sécurité</h2>
+            <div class="article-body">
+              <p>Des mesures techniques et organisationnelles appropriées sont mises en place pour protéger vos données
+                contre tout accès non autorisé, perte ou divulgation.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-main">
+        <div class="footer-brand">
+          <span class="footer-logo">LUCAS BOUSSARD</span>
+          <p>Consultant indépendant en executive performance. Île-de-France, France.</p>
+        </div>
+        <div class="footer-col">
+          <h5>Navigation</h5>
+          <a href="expertise.html">Expertise</a>
+          <a href="realisations.html">Réalisations</a>
+          <a href="about.html">À propos</a>
+          <a href="contact.html">Contact</a>
+        </div>
+        <div class="footer-col">
+          <h5>Légal</h5>
+          <a href="mentions-legales.html">Mentions légales</a>
+          <a href="politique-confidentialite.html" class="active-page">Confidentialité</a>
+          <a href="cgv.html">CGV</a>
+          <a href="cgu.html">CGU</a>
+        </div>
+        <div class="footer-col">
+          <h5>Contact</h5>
+          <a href="mailto:lboussard.lab@gmail.com">lboussard.lab@gmail.com</a>
+          <a href="tel:+33611624564">+33 6 11 62 45 64</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Lucas Boussard — Tous droits réservés</span>
+        <div class="footer-legal">
+          <a href="mentions-legales.html">Mentions légales</a>
+          <a href="politique-confidentialite.html" class="active-page">Confidentialité</a>
+          <a href="cgv.html">CGV</a>
+          <a href="cgu.html">CGU</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const burger = document.getElementById('burger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    burger.addEventListener('click', () => { burger.classList.toggle('open'); mobileMenu.classList.toggle('open'); });
+    const articles = document.querySelectorAll('.legal-article');
+    const sidebarItems = document.querySelectorAll('.sidebar-item');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          sidebarItems.forEach(item => item.classList.remove('active'));
+          const active = document.querySelector(`[data-target="${entry.target.id}"]`);
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    articles.forEach(a => observer.observe(a));
+    sidebarItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const target = document.getElementById(item.dataset.target);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  </script>
+</body>
+
+</html>
