@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnostic Santé & Performance</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #dbeafe;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --bg-app: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --success: #16a34a;
+            --warning: #ea580c;
+            --danger: #dc2626;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-app);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            max-width: 750px;
+            margin: 40px auto;
+            background: var(--bg-card);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            padding: 32px;
+            border: 1px solid var(--border);
+        }
+
+        .header {
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        /* Écran d'accueil */
+        .welcome-section {
+            text-align: left;
+        }
+
+        .welcome-section h2 {
+            font-size: 22px;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+
+        .welcome-section p {
+            color: var(--text-dark);
+            margin-bottom: 16px;
+            font-size: 15px;
+        }
+
+        .instructions-list {
+            margin: 24px 0;
+            padding-left: 20px;
+        }
+
+        .instructions-list li {
+            margin-bottom: 12px;
+            font-size: 15px;
+            color: var(--text-dark);
+        }
+
+        .instructions-list strong {
+            color: var(--primary);
+        }
+
+        /* Questionnaire (Masqué au début) */
+        .quiz-section {
+            display: none;
+        }
+
+        .progress-wrapper {
+            margin-bottom: 16px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .progress-container {
+            background: var(--border);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: var(--primary);
+            height: 100%;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .pillar-title-block {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+        }
+
+        .pillar-title-block h2 {
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .pillar-title-block p {
+            font-size: 14px;
+            color: #1e40af;
+            opacity: 0.9;
+        }
+
+        .question-block {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .question-block:last-of-type {
+            border-bottom: none;
+        }
+
+        .question-text {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            color: var(--text-dark);
+        }
+
+        .options-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            padding: 12px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            color: var(--text-dark);
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary);
+            background: var(--bg-app);
+        }
+
+        .option-btn.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid var(--border);
+            padding-top: 24px;
+            margin-top: 32px;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-light);
+        }
+
+        .btn-secondary:hover {
+            color: var(--text-dark);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Écran des Résultats */
+        .results-section {
+            display: none;
+        }
+
+        .score-box {
+            text-align: center;
+            padding: 24px;
+            border-radius: 12px;
+            background: var(--bg-app);
+            margin-bottom: 32px;
+        }
+
+        .global-score {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .status-optimal {
+            background-color: var(--success);
+        }
+
+        .status-moyen {
+            background-color: var(--warning);
+        }
+
+        .status-alerte {
+            background-color: var(--danger);
+        }
+
+        .pillar-ranking-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .pillar-rank-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            background: var(--bg-app);
+            border-radius: 10px;
+            border-left: 5px solid var(--primary);
+        }
+
+        .pillar-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pillar-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .pillar-score-text {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .pillar-percentage {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 550px) {
+            .options-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .option-btn {
+                text-align: left;
+                padding-left: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ============================================================
+     NAVBAR
+  ============================================================ -->
+    <!-- <div id="header-placeholder"></div>-->
+
+    <div class="quiz-container">
+
+        <!-- 1. ÉCRAN D'ACCUEIL -->
+        <div id="welcome-section" class="welcome-section">
+            <div class="header">
+                <h1>Auto-Diagnostic Santé & Performance</h1>
+            </div>
+            <h2>Auditez votre capital énergie</h2>
+            <p>Cet outil a été conçu pour évaluer de manière transversale les différents facteurs qui influencent votre
+                vitalité, votre niveau de fatigue et votre efficacité au quotidien.</p>
+            <p>À travers 6 piliers fondamentaux, vous
+                allez pouvoir identifier précisément vos forces et vos principaux leviers d'action.</p>
+
+            <ul class="instructions-list">
+                <li>⏱️ <strong>Durée :</strong> Comptez environ 3 minutes. Quittez la page fait revenir à zéro.</li>
+                <li>📊 <strong>Format :</strong> Le diagnostic se fait pilier par pilier. Toutes les questions d'un
+                    thème apparaissent sur la même page.</li>
+                <li>🎯 <strong>Consigne :</strong> Répondez de manière spontanée et honnête sur la base de votre
+                    quotidien actuel. Il n'y a pas de bonne ou de mauvaise réponse.</li>
+                <li>🔒 <strong>Confidentialité :</strong> Vos réponses sont totalement anonymes et ne servent qu'à
+                    générer votre profil personnalisé à la fin du test.</li>
+            </ul>
+
+            <button class="btn btn-primary" id="start-quiz-btn"
+                style="width: 100%; padding: 16px; font-size: 16px; margin-top: 10px;">Démarrer mon diagnostic</button>
+        </div>
+
+        <!-- 2. ÉCRAN QUESTIONNAIRE -->
+        <div id="quiz-section" class="quiz-section">
+            <div class="header">
+                <h1>Diagnostic Santé & Performance</h1>
+                <div class="progress-wrapper">
+                    <div class="progress-label">
+                        <span id="label-pillar-progress">Pilier</span>
+                        <span id="text-pillar-progress">Étape 1/6</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="pillar-progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pillar-title-block">
+                <h2 id="pillar-title">Nom du Pilier</h2>
+                <p id="pillar-desc">Description de la thématique...</p>
+            </div>
+
+            <div id="questions-container"></div>
+
+            <div class="footer-nav">
+                <button class="btn btn-secondary" id="prev-btn" disabled>Précédent</button>
+                <button class="btn btn-primary" id="next-btn" disabled>Suivant</button>
+            </div>
+        </div>
+
+        <!-- 3. ÉCRAN DES RÉSULTATS -->
+        <div id="results-section" class="results-section">
+            <div class="header">
+                <h1>Vos Résultats Finaux</h1>
+                <p>Découvrez l'analyse de votre état global et le classement détaillé de vos piliers.</p>
+            </div>
+
+            <div class="score-box">
+                <div class="global-score" id="global-score">0%</div>
+                <div class="status-badge" id="status-badge">Analyse...</div>
+                <p id="status-desc" style="font-size: 14px; color: var(--text-light);"></p>
+            </div>
+
+            <h2 style="font-size: 18px; margin-bottom: 12px;">Classement de vos piliers (du meilleur au moins bon)</h2>
+            <div class="pillar-ranking-list" id="pillar-ranking-list">
+                <!-- Injecté via JS -->
+            </div>
+
+            <button class="btn btn-primary" style="margin-top: 32px; width: 100%; padding: 14px;"
+                onclick="window.location.href='/'">
+                Retourner à la page principale <span class="arrow">→</span>
+        </div>
+    </div>
+
+    <!-- <footer id="footer-placeholder"></footer> -->
+
+    <script src="assets/js/script.js"></script>
+
+    <script>
+        // Structure de données regroupée par pilier
+        const pillarsStructure = [
+            {
+                name: "Activité Physique & Posturologie",
+                description: "Analyse de votre niveau de sédentarité, de votre ergonomie de travail et de votre mobilité au quotidien.",
+                questions: [
+                    { id: 1, text: "Souffrez-vous de douleurs physiques chroniques (mal de dos, sciatique, etc.) ?", inverted: true },
+                    { id: 2, text: "Restez-vous assis plus de 5 heures par jour de manière continue ?", inverted: true },
+                    { id: 3, text: "Votre poste de travail est-il parfaitement adapté à votre morphologie pour éviter les tensions ?", inverted: false },
+                    { id: 4, text: "Pratiquez-vous une activité physique régulière en dehors de la marche quotidienne ?", inverted: false },
+                    { id: 5, text: "Ressentez-vous des raideurs articulaires au réveil ou après une longue période d'immobilité ?", inverted: true },
+                    { id: 6, text: "Atteignez-vous l'objectif des 10 000 pas par jour ?", inverted: false },
+                    { id: 7, text: "Faites-vous une pause active (vous lever, marcher) toutes les 90 à 120 minutes ?", inverted: false }
+                ]
+            },
+            {
+                name: "Nutrition & Énergie",
+                description: "Évaluation de vos apports énergétiques, de votre hydratation, de votre digestion et de la qualité de vos repas.",
+                questions: [
+                    { id: 8, text: "Vos repas couvrent-ils correctement vos besoins caloriques et nutritionnels quotidiens ?", inverted: false },
+                    { id: 9, text: "Souffrez-vous régulièrement de troubles digestifs après vos repas (ballonnements, inconfort) ?", inverted: true },
+                    { id: 10, text: "Prenez-vous le temps de manger dans un environnement calme et sans écrans ?", inverted: false },
+                    { id: 11, text: "Consommez-vous plus de 3 tasses de café par jour ?", inverted: true },
+                    { id: 12, text: "Avez-vous des carences alimentaires diagnostiquées ou suspectées ?", inverted: true },
+                    { id: 13, text: "Consommez-vous des produits ultra-transformés ou très sucrés plus de 3 fois par semaine ?", inverted: true },
+                    { id: 14, text: "Buvez-vous au moins 1,5 litre d'eau par jour ?", inverted: false },
+                    { id: 15, text: "Ressentez-vous un coup de barre systématique l'après-midi (vers 14h-15h) ?", inverted: true }
+                ]
+            },
+            {
+                name: "Architecture du Sommeil & Récupération",
+                description: "Mesure de la qualité de vos nuits, de vos rituels de coucher et de votre capacité à recharger vos batteries.",
+                questions: [
+                    { id: 16, text: "Vous sentez-vous fatigué ou mal réveillé dès le matin ?", inverted: true },
+                    { id: 17, text: "Dormez-vous au moins 7 heures par nuit ?", inverted: false },
+                    { id: 18, text: "Utilisez-vous des écrans dans l'heure qui précède votre coucher ?", inverted: true },
+                    { id: 19, text: "Votre sommeil est-il fréquemment interrompu durant la nuit ?", inverted: true },
+                    { id: 20, text: "Mettez-vous plus de 20 à 30 minutes à vous endormir une fois couché ?", inverted: true },
+                    { id: 21, text: "Avez-vous impérativement besoin du week-end pour récupérer de votre semaine de travail ?", inverted: true },
+                    { id: 22, text: "Gardez-vous des horaires de coucher et de réveil réguliers (semaine et week-end) ?", inverted: false },
+                    { id: 23, text: "Consommez-vous de l'alcool, de la caféine ou un repas lourd moins de 3 heures avant de dormir ?", inverted: true }
+                ]
+            },
+            {
+                name: "Allostasie & Fatigue",
+                description: "Analyse de votre charge mentale, de votre niveau de stress cumulé et des signaux inconscients d'épuisement.",
+                questions: [
+                    { id: 24, text: "Continuez-vous à penser activement au travail après votre journée officielle ?", inverted: true },
+                    { id: 25, text: "Éprouvez-vous un sentiment de détachement, de cynisme ou de baisse d'empathie au travail ?", inverted: true },
+                    { id: 26, text: "Ressentez-vous un brouillard cognitif ou une baisse de lucidité après 16h ?", inverted: true },
+                    { id: 27, text: "Accumulez-vous des tensions physiques inconscientes (mâchoires serrées, épaules hautes) ?", inverted: true },
+                    { id: 28, text: "Votre charge de travail empiète-t-elle négativement sur votre vie privée ?", inverted: true },
+                    { id: 29, text: "Ressentez-vous une sensation de stress ou d'anxiété même en dehors du travail ?", inverted: true },
+                    { id: 30, text: "Avez-vous l'impression de subir votre quotidien sans pouvoir changer les choses ?", inverted: true },
+                    { id: 31, text: "Ressentez-vous une fatigue épuisante et dévorante en fin de journée ?", inverted: true }
+                ]
+            },
+            {
+                name: "Performance Cognitive & Productivité",
+                description: "Évaluation de vos capacités de concentration profonde, de gestion des tâches et de lucidité face aux imprévus.",
+                questions: [
+                    { id: 32, text: "Arrivez-vous à rester concentré 45 minutes sur une tâche complexe sans céder aux distractions ?", inverted: false },
+                    { id: 33, text: "Arrivez-vous à structurer efficacement vos journées en fonction de la priorité de vos tâches ?", inverted: false },
+                    { id: 34, text: "Trouvez-vous votre charge mentale globale trop lourde à porter en ce moment ?", inverted: true },
+                    { id: 35, text: "Bloquez-vous des créneaux dédiés à votre haute productivité (analyse, création, focus) ?", inverted: false },
+                    { id: 36, text: "Êtes-vous devenu moins patient ou plus irritable face aux imprévus ?", inverted: true },
+                    { id: 37, text: "Seriez-vous capable de prolonger l'effort intellectuel même après une grosse journée ?", inverted: false },
+                    { id: 38, text: "Estimez-vous que votre niveau d'énergie est optimal durant vos heures de travail ?", inverted: false }
+                ]
+            },
+            {
+                name: "Environnement & Sensorialité",
+                description: "Mesure de l'impact de votre environnement physique et numérique (déconnexion, soleil, dépendances du quotidien).",
+                questions: [
+                    { id: 39, text: "Évoluez-vous dans un environnement quotidien (pro ou perso) visuellement ou opérationnellement stressant ?", inverted: true },
+                    { id: 40, text: "Prenez-vous régulièrement des médicaments pour masquer les maux du quotidien (antidouleurs, somnifères) ?", inverted: true },
+                    { id: 41, text: "Arrivez-vous à vous déconnecter totalement du numérique quand c'est nécessaire ?", inverted: false },
+                    { id: 42, text: "Êtes-vous exposé à la lumière naturelle du soleil au moins 30 minutes par jour ?", inverted: false },
+                    { id: 43, text: "Consultez-vous vos outils de travail (mails, indicateurs) en dehors de vos heures de travail ?", inverted: true },
+                    { id: 44, text: "Tombez-vous systématiquement malade au début de vos vacances ou plusieurs fois par an ?", inverted: true },
+                    { id: 45, text: "Savez-vous vous accorder du temps rien que pour vous, sans aucune influence extérieure ?", inverted: false }
+                ]
+            }
+        ];
+
+        let currentPillarIndex = 0;
+        const userAnswers = {};
+
+        const welcomeSection = document.getElementById('welcome-section');
+        const quizSection = document.getElementById('quiz-section');
+        const resultsSection = document.getElementById('results-section');
+
+        const pillarTitle = document.getElementById('pillar-title');
+        const pillarDesc = document.getElementById('pillar-desc');
+        const questionsContainer = document.getElementById('questions-container');
+
+        const labelPillarProgress = document.getElementById('label-pillar-progress');
+        const textPillarProgress = document.getElementById('text-pillar-progress');
+        const pillarProgressBar = document.getElementById('pillar-progress-bar');
+
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const startQuizBtn = document.getElementById('start-quiz-btn');
+
+        // Événement clic pour démarrer
+        startQuizBtn.addEventListener('click', () => {
+            welcomeSection.classList.add('hidden');
+            quizSection.style.display = 'block';
+            renderPillar();
+        });
+
+        function renderPillar() {
+            const pillar = pillarsStructure[currentPillarIndex];
+
+            pillarTitle.innerText = pillar.name;
+            pillarDesc.innerText = pillar.description;
+            labelPillarProgress.innerText = `Pilier : ${pillar.name}`;
+            textPillarProgress.innerText = `Étape ${currentPillarIndex + 1} / ${pillarsStructure.length}`;
+
+            const progressPercent = ((currentPillarIndex) / pillarsStructure.length) * 100;
+            pillarProgressBar.style.width = `${progressPercent}%`;
+
+            questionsContainer.innerHTML = '';
+
+            pillar.questions.forEach((q, index) => {
+                const qBlock = document.createElement('div');
+                qBlock.className = 'question-block';
+
+                qBlock.innerHTML = `
+                <div class="question-text">${index + 1}. ${q.text}</div>
+                <div class="options-row" data-question-id="${q.id}">
+                    <button class="option-btn" data-value="0">Pas du tout</button>
+                    <button class="option-btn" data-value="1">Un peu</button>
+                    <button class="option-btn" data-value="2">Moyennement</button>
+                    <button class="option-btn" data-value="3">Tout à fait</button>
+                </div>
+            `;
+                questionsContainer.appendChild(qBlock);
+
+                if (userAnswers[q.id] !== undefined) {
+                    const savedValue = userAnswers[q.id];
+                    const activeBtn = qBlock.querySelector(`.option-btn[data-value="${savedValue}"]`);
+                    if (activeBtn) activeBtn.classList.add('selected');
+                }
+
+                const buttons = qBlock.querySelectorAll('.option-btn');
+                buttons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const value = parseInt(btn.getAttribute('data-value'));
+                        userAnswers[q.id] = value;
+
+                        buttons.forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+
+                        checkPillarCompletion();
+                    });
+                });
+            });
+
+            prevBtn.disabled = currentPillarIndex === 0;
+
+            if (currentPillarIndex === pillarsStructure.length - 1) {
+                nextBtn.innerText = "Voir mes résultats";
+            } else {
+                nextBtn.innerText = "Pilier suivant";
+            }
+
+            checkPillarCompletion();
+        }
+
+        function checkPillarCompletion() {
+            const currentPillar = pillarsStructure[currentPillarIndex];
+            const allAnswered = currentPillar.questions.every(q => userAnswers[q.id] !== undefined);
+            nextBtn.disabled = !allAnswered;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentPillarIndex < pillarsStructure.length - 1) {
+                currentPillarIndex++;
+                renderPillar();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                calculateAndShowResults();
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentPillarIndex > 0) {
+                currentPillarIndex--;
+                renderPillar();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        function calculateAndShowResults() {
+            quizSection.classList.add('hidden');
+            resultsSection.style.display = 'block';
+            pillarProgressBar.style.width = `100%`;
+            textPillarProgress.innerText = `Terminé`;
+
+            let globalTotalPoints = 0;
+            let globalMaxPoints = 0;
+            const rankedPiliers = [];
+
+            pillarsStructure.forEach(pillar => {
+                let pillarTotal = 0;
+                let pillarMax = pillar.questions.length * 3;
+
+                pillar.questions.forEach(q => {
+                    const rawScore = userAnswers[q.id];
+                    const calculatedScore = q.inverted ? (3 - rawScore) : rawScore;
+                    pillarTotal += calculatedScore;
+                });
+
+                globalTotalPoints += pillarTotal;
+                globalMaxPoints += pillarMax;
+
+                const pillarPercentage = Math.round((pillarTotal / pillarMax) * 100);
+                rankedPiliers.push({
+                    name: pillar.name,
+                    percentage: pillarPercentage,
+                    scoreText: `${pillarTotal} / ${pillarMax} pts`
+                });
+            });
+
+            const globalPercentage = Math.round((globalTotalPoints / globalMaxPoints) * 100);
+            document.getElementById('global-score').innerText = `${globalPercentage}%`;
+
+            const statusBadge = document.getElementById('status-badge');
+            const statusDesc = document.getElementById('status-desc');
+            statusBadge.className = 'status-badge';
+
+            if (globalPercentage >= 75) {
+                statusBadge.innerText = "État Optimal";
+                statusBadge.classList.add('status-optimal');
+                statusDesc.innerText = "Excellent ! Vos indicateurs globaux témoignent d'une superbe dynamique de santé, d'une excellente vitalité et d'une forte résilience face à la charge quotidienne.";
+            } else if (globalPercentage >= 45) {
+                statusBadge.innerText = "État Moyen / Vigilance";
+                statusBadge.classList.add('status-moyen');
+                statusDesc.innerText = "Attention. Votre capital énergie reste stable mais montre des signes clairs d'érosion sur certains axes majeurs. Ciblez prioritairement vos piliers les plus bas.";
+            } else {
+                statusBadge.innerText = "Alerte Épuisement / Surcharge";
+                statusBadge.classList.add('status-alerte');
+                statusDesc.innerText = "Urgence. Plusieurs piliers fondamentaux sont effondrés. Votre organisme et votre charge mentale fonctionnent actuellement à crédit. Des actions correctives s'imposent.";
+            }
+
+            rankedPiliers.sort((a, b) => b.percentage - a.percentage);
+
+            const rankingListContainer = document.getElementById('pillar-ranking-list');
+            rankingListContainer.innerHTML = '';
+
+            rankedPiliers.forEach((p, index) => {
+                let accentColor = 'var(--success)';
+                if (p.percentage < 45) accentColor = 'var(--danger)';
+                else if (p.percentage < 75) accentColor = 'var(--warning)';
+
+                const item = document.createElement('div');
+                item.className = 'pillar-rank-item';
+                item.style.borderLeftColor = accentColor;
+
+                item.innerHTML = `
+                <div class="pillar-info">
+                    <span class="pillar-name">#${index + 1} - ${p.name}</span>
+                    <span class="pillar-score-text">Score : ${p.scoreText}</span>
+                </div>
+                <div class="pillar-percentage" style="color: ${accentColor};">${p.percentage}%</div>
+            `;
+                rankingListContainer.appendChild(item);
+            });
+        }
+    </script>
+
+</body>
+
+</html>
