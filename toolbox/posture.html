@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur de Dette de Mobilité Posturale - Avancé</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --surface: #f8fafc;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --accent: #2563eb;
+            --accent-light: #eff6ff;
+            --radius: 12px;
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- CARTOGRAPHIE ANATOMIQUE --- */
+        .body-selector {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            max-width: 700px;
+            margin: 2rem auto;
+        }
+
+        @media(max-width: 650px) {
+            .body-selector {
+                gap: 1.5rem;
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        .body-view {
+            text-align: center;
+            width: 240px;
+        }
+
+        .body-view span {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .body-svg {
+            width: 100%;
+            height: auto;
+        }
+
+        .anatomy-bg {
+            fill: #f1f5f9;
+            stroke: #cbd5e1;
+            stroke-width: 1;
+        }
+
+        .muscle {
+            fill: #e2e8f0;
+            stroke: #ffffff;
+            stroke-width: 1.2;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .muscle:hover {
+            fill: #cbd5e1;
+        }
+
+        .muscle.selected {
+            fill: var(--accent) !important;
+        }
+
+        /* --- BADGES --- */
+        .zone-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+            background: var(--surface);
+            padding: 1rem;
+            border-radius: var(--radius);
+            border: 1px dashed var(--border);
+        }
+
+        .indicator-tag {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+        }
+
+        .indicator-tag.active {
+            background: var(--accent-light);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* --- HABITUDES --- */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media(min-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .option-card {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .option-card:hover {
+            background-color: var(--surface);
+            border-color: var(--text-muted);
+        }
+
+        .option-card.selected {
+            border-color: var(--accent);
+            background-color: var(--accent-light);
+        }
+
+        .option-card label {
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .option-card span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .btn-submit {
+            display: block;
+            width: 100%;
+            background: var(--text);
+            color: var(--bg);
+            border: none;
+            border-radius: var(--radius);
+            padding: 1.2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .btn-submit:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
+
+        /* --- RÉSULTATS --- */
+        #results {
+            display: none;
+        }
+
+        .score-container {
+            text-align: center;
+            padding: 2rem;
+            background: var(--surface);
+            border-radius: var(--radius);
+            margin-bottom: 2rem;
+        }
+
+        .score-val {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .routine-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .exe-card {
+            border-left: 4px solid var(--accent);
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        @media(max-width: 650px) {
+            .exe-card {
+                flex-direction: column-reverse;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+
+        .exe-info {
+            flex: 1;
+        }
+
+        .exe-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .exe-title {
+            font-weight: 700;
+            font-size: 1.15rem;
+        }
+
+        .exe-time {
+            font-size: 0.85rem;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .exe-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        /* Formatage de l'image externe */
+        .exe-img {
+            width: 250px;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+            background-color: #cbd5e1;
+        }
+
+        @media(max-width: 650px) {
+            .exe-img {
+                width: 100%;
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Calculateur de Dette de Mobilité Posturale</h1>
+            <p>Anatomie dynamique et protocole d'effacement des tensions en milieu professionnel.</p>
+        </header>
+
+        <div class="card">
+            <h2>1. Cartographie Anatomique des Douleurs</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">Cliquez précisément sur les
+                muscles ou articulations qui tirent ou se bloquent durant vos sessions de travail.</p>
+
+            <div class="body-selector">
+                <div class="body-view">
+                    <span>Vue Antérieure (Face)</span>
+                    <svg class="body-svg" viewBox="0 0 160 420">
+                        <path class="anatomy-bg"
+                            d="M80,20 C92,20 96,32 96,48 C96,65 92,72 80,72 C68,72 64,65 64,48 C64,32 68,20 80,20 Z" />
+                        <path class="muscle" data-muscle="epaules" d="M44,82 C52,78 60,76 64,76 L64,88 L52,98 Z" />
+                        <path class="muscle" data-muscle="epaules" d="M116,82 C108,78 100,76 96,76 L96,88 L108,98 Z" />
+                        <path class="muscle" data-muscle="pectoraux" d="M64,88 L80,90 L80,122 L55,116 Z" />
+                        <path class="muscle" data-muscle="pectoraux" d="M96,88 L80,90 L80,122 L105,116 Z" />
+                        <path class="muscle" data-muscle="bras" d="M42,94 L52,98 L47,150 L38,140 Z" />
+                        <path class="muscle" data-muscle="bras" d="M118,94 L108,98 L113,150 L122,140 Z" />
+                        <path class="muscle" data-muscle="avantbras" d="M38,144 L47,150 L39,210 L32,200 Z" />
+                        <path class="muscle" data-muscle="avantbras" d="M122,144 L113,150 L121,210 L128,200 Z" />
+                        <path class="muscle" data-muscle="abdos" d="M56,122 L104,122 L98,180 L62,180 Z" />
+                        <path class="muscle" data-muscle="quadriceps" d="M50,215 L78,212 L76,310 L54,305 Z" />
+                        <path class="muscle" data-muscle="quadriceps" d="M110,215 L82,212 L84,310 L106,305 Z" />
+                        <path class="muscle" data-muscle="mollets" d="M55,325 L75,325 L72,390 L60,390 Z" />
+                        <path class="muscle" data-muscle="mollets" d="M105,325 L85,325 L88,390 L100,390 Z" />
+                    </svg>
+                </div>
+
+                <div class="body-view">
+                    <span>Vue Postérieure (Dos)</span>
+                    <svg class="body-svg" viewBox="0 0 160 420">
+                        <path class="anatomy-bg"
+                            d="M80,20 C92,20 96,32 96,48 C96,65 92,72 80,72 C68,72 64,65 64,48 C64,32 68,20 80,20 Z" />
+                        <path class="muscle" data-muscle="trapeze"
+                            d="M64,74 C70,68 90,68 96,74 L104,88 L80,105 L56,88 Z" />
+                        <path class="muscle" data-muscle="epaules" d="M44,82 C48,88 54,94 56,88 L46,105 Z" />
+                        <path class="muscle" data-muscle="epaules" d="M116,82 C112,88 106,94 104,88 L114,105 Z" />
+                        <path class="muscle" data-muscle="dos" d="M56,96 L80,105 L80,150 L50,145 Z" />
+                        <path class="muscle" data-muscle="dos" d="M104,96 L80,105 L80,150 L110,145 Z" />
+                        <path class="muscle" data-muscle="lombaires" d="M52,152 L108,152 L100,185 L60,185 Z" />
+                        <path class="muscle" data-muscle="bras" d="M40,94 L46,105 L41,150 L34,140 Z" />
+                        <path class="muscle" data-muscle="bras" d="M120,94 L114,105 L119,150 L126,140 Z" />
+                        <path class="muscle" data-muscle="avantbras" d="M34,144 L41,150 L35,210 L28,200 Z" />
+                        <path class="muscle" data-muscle="avantbras" d="M126,144 L119,150 L125,210 L132,200 Z" />
+                        <path class="muscle" data-muscle="fessiers" d="M46,192 L80,190 L80,225 L45,225 Z" />
+                        <path class="muscle" data-muscle="fessiers" d="M114,192 L80,190 L80,225 L115,225 Z" />
+                        <path class="muscle" data-muscle="ischios" d="M46,230 L78,230 L75,310 L50,310 Z" />
+                        <path class="muscle" data-muscle="ischios" d="M114,230 L82,230 L85,310 L110,310 Z" />
+                        <path class="muscle" data-muscle="mollets" d="M52,325 L76,325 L73,390 L58,390 Z" />
+                        <path class="muscle" data-muscle="mollets" d="M108,325 L84,325 L87,390 L102,390 Z" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="zone-indicators">
+                <span class="indicator-tag" id="tag-trapeze">Trapèzes</span>
+                <span class="indicator-tag" id="tag-epaules">Épaules</span>
+                <span class="indicator-tag" id="tag-dos">Grand Dorsal</span>
+                <span class="indicator-tag" id="tag-lombaires">Lombaires</span>
+                <span class="indicator-tag" id="tag-pectoraux">Pectoraux</span>
+                <span class="indicator-tag" id="tag-abdos">Abdos</span>
+                <span class="indicator-tag" id="tag-bras">Bras</span>
+                <span class="indicator-tag" id="tag-avantbras">Avant-bras</span>
+                <span class="indicator-tag" id="tag-fessiers">Fessiers</span>
+                <span class="indicator-tag" id="tag-quadriceps">Quadriceps</span>
+                <span class="indicator-tag" id="tag-ischios">Ischios</span>
+                <span class="indicator-tag" id="tag-mollets">Mollets</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>2. Variables Environnementales & Habitudes</h2>
+            <div class="options-grid">
+                <div class="option-card" id="hab-laptop" onclick="toggleHabitude('laptop', this)">
+                    <label>Utilisation majeure d'un Laptop portable</label>
+                    <span>Regard bas induisant une flexion cervicale continue.</span>
+                </div>
+                <div class="option-card" id="hab-double" onclick="toggleHabitude('double', this)">
+                    <label>Configuration Multi-Écrans / Latéraux</label>
+                    <span>Engendre des micro-rotations répétées et asymétriques du tronc.</span>
+                </div>
+                <div class="option-card" id="hab-mouse" onclick="toggleHabitude('mouse', this)">
+                    <label>Souris classique décentrée</label>
+                    <span>Maintient le bras droit en abduction/rotation externe prolongée.</span>
+                </div>
+                <div class="option-card" id="hab-sitting" onclick="toggleHabitude('sitting', this)">
+                    <label>Station assise stricte (+ de 6h/jour)</label>
+                    <span>Inhibition nerveuse fessière et raccourcissement des psoas.</span>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-submit" onclick="calculerDette()">Générer l'Analyse Posturale & le Protocole</button>
+
+        <div id="results" class="card">
+            <h2>Votre Bilan d'Ergonomie Dynamique</h2>
+            <div class="score-container">
+                <div class="score-val" id="score-display">0%</div>
+                <div style="font-weight: 700; font-size: 1.1rem;" id="status-display">-</div>
+                <p id="desc-display" style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.5rem;"></p>
+            </div>
+
+            <h2 style="margin-top: 2.5rem;">Rituel d'Effacement Anatomique de Bureau</h2>
+            <div class="routine-grid" id="routine-container">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const diagnostic = {
+            muscles: {
+                trapeze: false, epaules: false, dos: false, lombaires: false,
+                pectoraux: false, abdos: false, bras: false, avantbras: false,
+                fessiers: false, quadriceps: false, ischios: false, mollets: false
+            },
+            habitudes: { laptop: false, double: false, mouse: false, sitting: false }
+        };
+
+        // Banque enrichie avec images Unsplash stables et durables
+        const protocoles = {
+            hautCroise: {
+                titre: "L'Oiseau de Chasse (Trapèzes / Épaules / Pectoraux)",
+                temps: "1 min 15",
+                desc: "Idéal pour casser le dos rond. Assis au bord, bombez le torse. Placez vos bras en 'W', coudes pliés tirés vers le bas et fortement vers l'arrière pour pincer vos omoplates.",
+                img: "../assets/images/posture/oiseau.png"
+            },
+            stretchCou: {
+                titre: "Désamorçage Cervical (Trapèzes / Nuque)",
+                temps: "1 min",
+                desc: "Laissez tomber une épaule vers le sol. Inclinez doucement la tête du côté opposé. Pour accentuer sans forcer, posez le poids de la tête sur la main.",
+                img: "../assets/images/posture/nuque.png"
+            },
+            canalCarpien: {
+                titre: "Extension Fléchisseurs (Avant-bras / Bras)",
+                temps: "45 sec / bras",
+                desc: "Tendez un bras devant vous à hauteur d'épaule, paume vers l'avant, doigts vers le sol. Utilisez l'autre main pour ramener doucement les doigts vers votre buste.",
+                img: "../assets/images/posture/extension_avant_bras.png"
+            },
+            deverrouillageLombaire: {
+                titre: "La Torsion Axiale Contrôlée (Dos / Lombaires)",
+                temps: "1 min 30",
+                desc: "Ancrez fermement vos pieds. Saisissez l'accoudoir ou le dossier opposé de votre fauteuil avec votre main. En inspirant, auto-grandissez votre colonne ; en expirant, pivotez le tronc.",
+                img: "../assets/images/posture/torsion.png"
+            },
+            stretchLombaireBas: {
+                titre: "Flexion Décompressive (Lombaires / Abdos)",
+                temps: "1 min",
+                desc: "Écartez légèrement les genoux, asseyez-vous bien au fond du fauteuil et plongez lentement le buste en avant pour relâcher totalement votre tête et vos mains vers le sol.",
+                img: "../assets/images/posture/stretch.png"
+            },
+            glutealAmnesia: {
+                titre: "Reset Clinique de Hanche (Fessiers / Ischios)",
+                temps: "1 min 30",
+                desc: "Posez la cheville droite sur le genou gauche (forme un '4'). Gardez votre colonne bien droite. Penchez le buste vers l'avant à partir des hanches jusqu'à étirer la fesse.",
+                img: "../assets/images/posture/hanche.png"
+            },
+            ouverturePsoas: {
+                titre: "Ouverture du Psoas (Quadriceps / Flexion de Hanche)",
+                temps: "1 min / côté",
+                desc: "Positionnez-vous de profil sur le bord de votre chaise, une fesse dans le vide. Reculez la jambe extérieure loin derrière, genou vers le bas, rétroversez le bassin pour étirer l'avant de la hanche.",
+                img: "../assets/images/posture/psoas.png"
+            },
+            pompeVeineuse: {
+                titre: "Élévations Calcanéennes (Mollets / Circulation)",
+                temps: "1 min",
+                desc: "Debout derrière votre chaise, décollez les talons au maximum pour vous stabiliser sur la pointe des pieds, en contractant intensément vos mollets pendant 2 secondes.",
+                img: "../assets/images/posture/pompe_veineuse.png"
+            }
+        };
+
+        document.querySelectorAll('.muscle').forEach(muscleElement => {
+            muscleElement.addEventListener('click', function () {
+                const muscleName = this.getAttribute('data-muscle');
+                diagnostic.muscles[muscleName] = !diagnostic.muscles[muscleName];
+
+                document.querySelectorAll(`.muscle[data-muscle="${muscleName}"]`).forEach(el => {
+                    el.classList.toggle('selected', diagnostic.muscles[muscleName]);
+                });
+
+                document.getElementById(`tag-${muscleName}`).classList.toggle('active', diagnostic.muscles[muscleName]);
+            });
+        });
+
+        function toggleHabitude(hab, element) {
+            diagnostic.habitudes[hab] = !diagnostic.habitudes[hab];
+            element.classList.toggle('selected');
+        }
+
+        function calculerDette() {
+            let score = 0;
+            Object.values(diagnostic.muscles).forEach(active => { if (active) score += 12; });
+            Object.values(diagnostic.habitudes).forEach(active => { if (active) score += 10; });
+
+            score = Math.min(score, 100);
+            if (score === 0) score = 15;
+
+            document.getElementById('score-display').innerText = score + "%";
+
+            let status = "";
+            let desc = "";
+            if (score < 35) {
+                status = "Dette d'Inactivité Mineure";
+                desc = "Tensions légères. Vos articulations compensent bien, mais vos fascias s'asphyxient.";
+            } else if (score < 65) {
+                status = "Dette de Raideur Modérée";
+                desc = "Marqueurs typiques du travail de bureau (syndrome du haut croisé ou début d'amnésie fessière). Action requise.";
+            } else {
+                status = "Dette Posturale Avancée (Amnésie Muscle/Fascias)";
+                desc = "Diagnostic critique : vos muscles stabilisateurs sont inhibés. Ce rituel est obligatoire.";
+            }
+
+            document.getElementById('status-display').innerText = status;
+            document.getElementById('desc-display').innerText = desc;
+
+            const routineContainer = document.getElementById('routine-container');
+            routineContainer.innerHTML = "";
+
+            let selected = [];
+
+            // Routage intelligent et affiné grâce aux nouveaux exercices intégrés
+            if (diagnostic.muscles.trapeze || diagnostic.habitudes.laptop) {
+                selected.push(protocoles.stretchCou);
+            }
+            if (diagnostic.muscles.epaules || diagnostic.muscles.pectoraux) {
+                selected.push(protocoles.hautCroise);
+            }
+            if (diagnostic.muscles.avantbras || diagnostic.muscles.bras || diagnostic.habitudes.mouse) {
+                selected.push(protocoles.canalCarpien);
+            }
+            if (diagnostic.muscles.dos || diagnostic.habitudes.double) {
+                selected.push(protocoles.deverrouillageLombaire);
+            }
+            if (diagnostic.muscles.lombaires || diagnostic.muscles.abdos) {
+                selected.push(protocoles.stretchLombaireBas);
+            }
+            if (diagnostic.muscles.fessiers || diagnostic.muscles.ischios) {
+                selected.push(protocoles.glutealAmnesia);
+            }
+            if (diagnostic.muscles.quadriceps || diagnostic.habitudes.sitting) {
+                selected.push(protocoles.ouverturePsoas);
+            }
+            if (diagnostic.muscles.mollets) {
+                selected.push(protocoles.pompeVeineuse);
+            }
+
+            // Complétion de sécurité pour garantir 3 exercices uniques
+            const fallbacks = [protocoles.hautCroise, protocoles.deverrouillageLombaire, protocoles.glutealAmnesia, protocoles.stretchCou];
+            for (let fallback of fallbacks) {
+                if (selected.length >= 3) break;
+                if (!selected.includes(fallback)) selected.push(fallback);
+            }
+
+            selected = [...new Set(selected)].slice(0, 3);
+
+            selected.forEach(exe => {
+                const card = document.createElement('div');
+                card.className = 'exe-card';
+                card.innerHTML = `
+                <div class="exe-info">
+                    <div class="exe-header">
+                        <span class="exe-title">${exe.titre}</span>
+                        <span class="exe-time">${exe.temps}</span>
+                    </div>
+                    <p class="exe-desc">${exe.desc}</p>
+                </div>
+                <img class="exe-img" src="${exe.img}" alt="${exe.titre}" loading="lazy">
+            `;
+                routineContainer.appendChild(card);
+            });
+
+            const resultsSection = document.getElementById('results');
+            resultsSection.style.display = 'block';
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+
+</body>
+
+</html>
