@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snacks de Mouvement — Brain Breaks</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --surface: #f8fafc;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --accent: #2563eb;
+            --accent-light: #eff6ff;
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 640px;
+            background: var(--bg);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .section-title {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        /* Grille de boutons */
+        .fatigue-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn-state {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem 1.25rem;
+            text-align: left;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .btn-state:hover {
+            border-color: var(--accent);
+            background: var(--accent-light);
+            transform: translateY(-1px);
+        }
+
+        .btn-state.active {
+            border-color: var(--accent);
+            background: var(--accent-light);
+            box-shadow: 0 0 0 2px var(--accent-light);
+        }
+
+        .state-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text);
+        }
+
+        .state-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Zone de résultat (Vidéo) */
+        .video-container {
+            display: none;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            background: var(--surface);
+            margin-top: 2rem;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .video-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .routine-info h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--accent-light);
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .iframe-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            /* Ratio 16:9 */
+            height: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #000;
+            margin-top: 1rem;
+        }
+
+        .iframe-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (min-width: 480px) {
+            .fatigue-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Snacks de Mouvement</h1>
+            <p class="subtitle">Des micro-pauses ciblées pour recharger votre corps et votre esprit.</p>
+        </header>
+
+        <main>
+            <div class="section-title">Quel est votre état actuel ?</div>
+
+            <div class="fatigue-grid">
+                <button class="btn-state" data-target="brouillard">
+                    <span class="state-title">🧠 Brouillard mental</span>
+                    <span class="state-desc">Focus & Respiration croisée (4 min)</span>
+                </button>
+
+                <button class="btn-state" data-target="tension">
+                    <span class="state-title">🧣 Tension cervicale</span>
+                    <span class="state-desc">Déverrouillage haut du corps (5 min)</span>
+                </button>
+
+                <button class="btn-state" data-target="somnolence">
+                    <span class="state-title">🥱 Somnolence post-prandiale</span>
+                    <span class="state-desc">Boost d'énergie express (3 min)</span>
+                </button>
+
+                <button class="btn-state" data-target="yeux">
+                    <span class="state-title">👁️ Fatigue visuelle</span>
+                    <span class="state-desc">Yoga des yeux & Déconnexion (3 min)</span>
+                </button>
+            </div>
+
+            <!-- Conteneur Dynamique pour la Vidéo -->
+            <div class="video-container" id="videoContainer">
+                <div class="video-header">
+                    <div class="routine-info">
+                        <span class="badge" id="routineType">Mobilité</span>
+                        <h3 id="routineTitle">Nom de la routine</h3>
+                    </div>
+                </div>
+                <div class="iframe-wrapper">
+                    <!-- Ajout de rel=0 pour éviter les suggestions hors sujet à la fin -->
+                    <iframe id="videoPlayer" src=""
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen></iframe>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Sélection de vidéos fonctionnelles, publiques et intégrables (embed)
+        const routines = {
+            brouillard: {
+                title: "Respiration cohérence cardiaque & Clarté",
+                type: "Neuro-Activation",
+                embedUrl: "https://www.youtube.com/embed/bMdgE6onb_E?rel=0"
+            },
+            tension: {
+                title: "Étirements express de bureau (Nuque/Épaules)",
+                type: "Mobilité",
+                embedUrl: "https://www.youtube.com/embed/vPhM6X_8Xk0?rel=0"
+            },
+            somnolence: {
+                title: "Réveil musculaire & Énergie debout",
+                type: "Boost Express",
+                embedUrl: "https://www.youtube.com/embed/g5LHQk8zU_4?rel=0"
+            },
+            yeux: {
+                title: "Yoga des yeux & Soulagement écrans",
+                type: "Gym Oculaire",
+                embedUrl: "https://www.youtube.com/embed/8_gXbE_z9y4?rel=0"
+            }
+        };
+
+        const buttons = document.querySelectorAll('.btn-state');
+        const videoContainer = document.getElementById('videoContainer');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const routineTitle = document.getElementById('routineTitle');
+        const routineType = document.getElementById('routineType');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Gestion de la classe active
+                buttons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                // Récupération des données correspondantes
+                const target = button.getAttribute('data-target');
+                const data = routines[target];
+
+                if (data) {
+                    // Injection des données
+                    routineTitle.textContent = data.title;
+                    routineType.textContent = data.type;
+                    videoPlayer.src = data.embedUrl;
+
+                    // Affichage
+                    videoContainer.style.display = 'block';
+
+                    // Centrage de la vidéo sur l'écran
+                    videoContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

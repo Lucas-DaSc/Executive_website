@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur TDEE Analytique Expert</title>
+    <!-- Chart.js pour le graphique interactif -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --surface: #f8fafc;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --accent: #2563eb;
+            --accent-light: #eff6ff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            margin: 0;
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+        }
+
+        header {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.03em;
+            color: var(--text);
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 1.2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        input,
+        select {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.65rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .macro-info {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            grid-column: span 3;
+            text-align: right;
+            margin-top: -0.5rem;
+        }
+
+        button {
+            width: 100%;
+            background: var(--text);
+            color: var(--bg);
+            border: none;
+            padding: 0.9rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        button:hover {
+            background: #1e293b;
+        }
+
+        /* Résultats et Graphique */
+        .results-box {
+            display: none;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .tdee-total {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tdee-val {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        .tdee-unit {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        @media (max-width: 640px) {
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .grid,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+        }
+
+        .breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .breakdown-row:last-child {
+            border-bottom: none;
+        }
+
+        .breakdown-label {
+            color: var(--text-muted);
+        }
+
+        .breakdown-val {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-height: 240px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Calculateur TDEE</h1>
+            <p class="subtitle">BMR + NEAT + EAT + TEF</p>
+        </header>
+
+        <form id="tdeeForm" onsubmit="calculateTDEE(event)">
+            <!-- 1. BMR -->
+            <div class="section">
+                <div class="section-title">1. Métabolisme de Base (BMR)</div>
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="gender">Genre</label>
+                        <select id="gender" required>
+                            <option value="male">Homme</option>
+                            <option value="female">Femme</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="age">Âge (ans)</label>
+                        <input type="number" id="age" min="15" max="100" value="30" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="weight">Poids (kg)</label>
+                        <input type="number" id="weight" step="0.1" min="30" max="250" value="70" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="height">Taille (cm)</label>
+                        <input type="number" id="height" min="100" max="250" value="175" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. NEAT -->
+            <div class="section">
+                <div class="section-title">2. Activité Quotidienne hors sport (NEAT)</div>
+                <div class="form-group full-width" style="margin-bottom: 1rem;">
+                    <label for="neatMode">Méthode d'évaluation du NEAT</label>
+                    <select id="neatMode" onchange="toggleNeatMode()" required>
+                        <option value="preset">Sélectionner par type d'activité / style de vie</option>
+                        <option value="steps">Affinage personnalisé </option>
+                    </select>
+                </div>
+
+                <!-- Mode Presets -->
+                <div id="neatPresetField" class="form-group full-width">
+                    <label for="neat">Style de vie & activité de vos journées</label>
+                    <select id="neat">
+                        <option value="150">Sédentaire (Bureau, assise prolongée) (~150 kcal)</option>
+                        <option value="350">Légèrement actif (Professeur, marche fréquente) (~350 kcal)</option>
+                        <option value="600">Actif (Serveur, infirmière, debout continu) (~600 kcal)</option>
+                        <option value="900">Très actif (Ouvrier, travaux physiques) (~900 kcal)</option>
+                    </select>
+                </div>
+
+                <!-- Mode Pas à pas -->
+                <div id="neatStepsField" class="grid hidden">
+                    <div class="form-group">
+                        <label for="stepsCount">Nombre moyen de pas / jour</label>
+                        <input type="number" id="stepsCount" min="0" step="500" value="8000" placeholder="Ex: 10000">
+                    </div>
+                    <div class="form-group">
+                        <label for="baseNeatSteps">Activité résiduelle hors marche (NEAT de base)</label>
+                        <select id="baseNeatSteps">
+                            <option value="100">Très faible (Essentiellement assis au repos) (~100 kcal)</option>
+                            <option value="250">Modérée (Piétinement, debout) (~250 kcal)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. EAT -->
+            <div class="section">
+                <div class="section-title">3. Dépense liée au Sport (EAT)</div>
+                <div class="form-group full-width" style="margin-bottom: 1rem;">
+                    <label for="eatMode">Méthode de saisie pour le sport</label>
+                    <select id="eatMode" onchange="toggleEatMode()" required>
+                        <option value="calc">Calculer selon mes entraînements de la semaine</option>
+                        <option value="direct">Saisir directement une valeur (kcal / jour)</option>
+                    </select>
+                </div>
+
+                <!-- Mode Calculé -->
+                <div id="eatCalcFields" class="grid">
+                    <div class="form-group">
+                        <label for="sportHours">Heures de sport / semaine</label>
+                        <input type="number" id="sportHours" step="0.5" min="0" value="3">
+                    </div>
+                    <div class="form-group">
+                        <label for="intensity">Intensité moyenne</label>
+                        <select id="intensity">
+                            <option value="350">Modérée (Musculation, running léger) (~350 kcal/h)</option>
+                            <option value="600">Intense (CrossFit, Boxe, HIIT) (~600 kcal/h)</option>
+                            <option value="200">Faible (Yoga, Pilates) (~200 kcal/h)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Mode Saisie Directe -->
+                <div id="eatDirectFields" class="form-group full-width hidden">
+                    <label for="eatDirectVal">Calories brûlées via le sport (moyenne par jour)</label>
+                    <input type="number" id="eatDirectVal" min="0" value="200" placeholder="Ex: 250">
+                </div>
+            </div>
+
+            <!-- 4. TEF -->
+            <div class="section">
+                <div class="section-title">4. Effet Thermique des Aliments (TEF)</div>
+                <div class="form-group full-width" style="margin-bottom: 1rem;">
+                    <label for="dietPreset">Type de configuration nutritionnelle</label>
+                    <select id="dietPreset" onchange="toggleMacroFields()" required>
+                        <option value="balanced">Standard (Prot: 20%, Glu: 50%, Lip: 30%)</option>
+                        <option value="high_protein">Riche en Protéines (Prot: 35%, Glu: 40%, Lip: 25%)</option>
+                        <option value="custom_pct">Personnalisée en Pourcentages (%)</option>
+                        <option value="custom_grams">Personnalisée en Grammes (g / jour)</option>
+                    </select>
+                </div>
+
+                <!-- Inputs pour Ratios / Quantités -->
+                <div class="grid-3">
+                    <div class="form-group">
+                        <label id="lblProt" for="macroProt">Protéines (%)</label>
+                        <input type="number" id="macroProt" min="0" value="20" oninput="updateMacroFeedback()">
+                    </div>
+                    <div class="form-group">
+                        <label id="lblCarb" for="macroCarb">Glucides (%)</label>
+                        <input type="number" id="macroCarb" min="0" value="50" oninput="updateMacroFeedback()">
+                    </div>
+                    <div class="form-group">
+                        <label id="lblFat" for="macroFat">Lipides (%)</label>
+                        <input type="number" id="macroFat" min="0" value="30" oninput="updateMacroFeedback()">
+                    </div>
+                    <div class="macro-info" id="macroFeedbackLabel">Total : 100%</div>
+                </div>
+            </div>
+
+            <button type="submit">Calculer le TDEE Global</button>
+        </form>
+
+        <!-- ZONE DE RÉSULTATS -->
+        <div id="results" class="results-box">
+            <div class="tdee-total">
+                <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem; color: var(--text-muted); font-weight: 500;">Votre
+                    Dépense Énergétique Totale (TDEE)</p>
+                <div class="tdee-val"><span id="resTdee">0</span> <span class="tdee-unit">kcal / jour</span></div>
+            </div>
+
+            <div class="results-grid">
+                <div class="breakdown">
+                    <div class="breakdown-row">
+                        <span class="breakdown-label">Métabolisme de Base (BMR)</span>
+                        <span class="breakdown-val" id="resBmr">0 kcal</span>
+                    </div>
+                    <div class="breakdown-row">
+                        <span class="breakdown-label">Activité du Quotidien (NEAT)</span>
+                        <span class="breakdown-val" id="resNeat">0 kcal</span>
+                    </div>
+                    <div class="breakdown-row">
+                        <span class="breakdown-label">Dépense Sportive (EAT)</span>
+                        <span class="breakdown-val" id="resEat">0 kcal</span>
+                    </div>
+                    <div class="breakdown-row">
+                        <span class="breakdown-label">Thermogenèse / Digestion (TEF)</span>
+                        <span class="breakdown-val" id="resTef">0 kcal</span>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="tdeeChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let myChart = null;
+
+        // Gestion de l'affichage NEAT
+        function toggleNeatMode() {
+            const mode = document.getElementById('neatMode').value;
+            if (mode === 'preset') {
+                document.getElementById('neatPresetField').classList.remove('hidden');
+                document.getElementById('neatStepsField').classList.add('hidden');
+            } else {
+                document.getElementById('neatPresetField').classList.add('hidden');
+                document.getElementById('neatStepsField').classList.remove('hidden');
+            }
+        }
+
+        // Gestion de l'affichage EAT
+        function toggleEatMode() {
+            const mode = document.getElementById('eatMode').value;
+            if (mode === 'calc') {
+                document.getElementById('eatCalcFields').classList.remove('hidden');
+                document.getElementById('eatDirectFields').classList.add('hidden');
+            } else {
+                document.getElementById('eatCalcFields').classList.add('hidden');
+                document.getElementById('eatDirectFields').classList.remove('hidden');
+            }
+        }
+
+        // Gestion de l'affichage TEF (Macros)
+        function toggleMacroFields() {
+            const preset = document.getElementById('dietPreset').value;
+            const pInput = document.getElementById('macroProt');
+            const cInput = document.getElementById('macroCarb');
+            const fInput = document.getElementById('macroFat');
+
+            const lblP = document.getElementById('lblProt');
+            const lblC = document.getElementById('lblCarb');
+            const lblF = document.getElementById('lblFat');
+
+            if (preset === 'balanced') {
+                lblP.innerText = "Protéines (%)"; lblC.innerText = "Glucides (%)"; lblF.innerText = "Lipides (%)";
+                pInput.value = 20; cInput.value = 50; fInput.value = 30;
+                pInput.disabled = cInput.disabled = fInput.disabled = true;
+            } else if (preset === 'high_protein') {
+                lblP.innerText = "Protéines (%)"; lblC.innerText = "Glucides (%)"; lblF.innerText = "Lipides (%)";
+                pInput.value = 35; cInput.value = 40; fInput.value = 25;
+                pInput.disabled = cInput.disabled = fInput.disabled = true;
+            } else if (preset === 'custom_pct') {
+                lblP.innerText = "Protéines (%)"; lblC.innerText = "Glucides (%)"; lblF.innerText = "Lipides (%)";
+                pInput.disabled = cInput.disabled = fInput.disabled = false;
+            } else if (preset === 'custom_grams') {
+                lblP.innerText = "Protéines (g)"; lblC.innerText = "Glucides (g)"; lblF.innerText = "Lipides (g)";
+                pInput.value = 140; cInput.value = 250; fInput.value = 70;
+                pInput.disabled = cInput.disabled = fInput.disabled = false;
+            }
+            updateMacroFeedback();
+        }
+
+        function updateMacroFeedback() {
+            const preset = document.getElementById('dietPreset').value;
+            const p = parseFloat(document.getElementById('macroProt').value) || 0;
+            const c = document.getElementById('macroCarb').value ? parseFloat(document.getElementById('macroCarb').value) : 0;
+            const f = document.getElementById('macroFat').value ? parseFloat(document.getElementById('macroFat').value) : 0;
+
+            const label = document.getElementById('macroFeedbackLabel');
+
+            if (preset !== 'custom_grams') {
+                const total = p + c + f;
+                label.innerText = `Total : ${total}%`;
+                label.style.color = (total !== 100) ? '#ef4444' : 'var(--text-muted)';
+            } else {
+                const estimatedKcal = (p * 4) + (c * 4) + (f * 9);
+                label.innerText = `Énergie diète : ~${Math.round(estimatedKcal)} kcal`;
+                label.style.color = 'var(--text-muted)';
+            }
+        }
+
+        function calculateTDEE(event) {
+            event.preventDefault();
+
+            const TEF_PROT = 0.25;
+            const TEF_CARB = 0.07;
+            const TEF_FAT = 0.03;
+
+            // 1. Calcul du BMR (Mifflin-St Jeor)
+            const gender = document.getElementById('gender').value;
+            const age = parseFloat(document.getElementById('age').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+
+            let bmr = (10 * weight) + (6.25 * height) - (5 * age);
+            bmr = (gender === 'male') ? bmr + 5 : bmr - 161;
+
+            // 2. Récupération du NEAT (avec gestion de l'option "Pas à pas")
+            const neatMode = document.getElementById('neatMode').value;
+            let neat = 0;
+            if (neatMode === 'preset') {
+                neat = parseFloat(document.getElementById('neat').value);
+            } else {
+                const steps = parseFloat(document.getElementById('stepsCount').value) || 0;
+                const baseNeat = parseFloat(document.getElementById('baseNeatSteps').value) || 0;
+                // Formule de coût énergétique net de la marche (indépendamment du BMR) :
+                // ~0.0005 kcal par pas et par kg de poids corporel.
+                const stepsKcal = steps * weight * 0.0005;
+                neat = stepsKcal + baseNeat;
+            }
+
+            // 3. Récupération de l'EAT (Sport)
+            const eatMode = document.getElementById('eatMode').value;
+            let eat = 0;
+            if (eatMode === 'calc') {
+                const sportHours = parseFloat(document.getElementById('sportHours').value) || 0;
+                const intensity = parseFloat(document.getElementById('intensity').value);
+                eat = (sportHours * intensity) / 7;
+            } else {
+                eat = parseFloat(document.getElementById('eatDirectVal').value) || 0;
+            }
+
+            // 4. Calcul du TEF (Digestion)
+            const dietPreset = document.getElementById('dietPreset').value;
+            const pVal = parseFloat(document.getElementById('macroProt').value) || 0;
+            const cVal = parseFloat(document.getElementById('macroCarb').value) || 0;
+            const fVal = parseFloat(document.getElementById('macroFat').value) || 0;
+
+            let tdee = 0;
+            let tef = 0;
+            const subTotal = bmr + neat + eat;
+
+            if (dietPreset !== 'custom_grams') {
+                if ((pVal + cVal + fVal) !== 100) {
+                    alert("En mode pourcentage, la somme des macros doit être égale à 100%.");
+                    return;
+                }
+                const dietTEFFactor = ((pVal * TEF_PROT) + (cVal * TEF_CARB) + (fVal * TEF_FAT)) / 100;
+                tdee = subTotal / (1 - dietTEFFactor);
+                tef = tdee * dietTEFFactor;
+            } else {
+                const tefProtKcal = (pVal * 4) * TEF_PROT;
+                const tefCarbKcal = (cVal * 4) * TEF_CARB;
+                const tefFatKcal = (fVal * 9) * TEF_FAT;
+                tef = tefProtKcal + tefCarbKcal + tefFatKcal;
+                tdee = subTotal + tef;
+            }
+
+            // 5. Affichage des valeurs textuelles
+            document.getElementById('resBmr').innerText = Math.round(bmr) + ' kcal';
+            document.getElementById('resNeat').innerText = Math.round(neat) + ' kcal';
+            document.getElementById('resEat').innerText = Math.round(eat) + ' kcal';
+            document.getElementById('resTef').innerText = Math.round(tef) + ' kcal';
+            document.getElementById('resTdee').innerText = Math.round(tdee);
+
+            document.getElementById('results').style.display = 'block';
+
+            // 6. Mise à jour ou création du Donut Chart
+            const ctx = document.getElementById('tdeeChart').getContext('2d');
+            if (myChart) { myChart.destroy(); }
+
+            myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['BMR', 'NEAT', 'EAT', 'TEF'],
+                    datasets: [{
+                        data: [Math.round(bmr), Math.round(neat), Math.round(eat), Math.round(tef)],
+                        backgroundColor: ['#1e3a8a', '#2563eb', '#60a5fa', '#cbd5e1'],
+                        borderWidth: 1,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { boxWidth: 10, font: { size: 11, weight: '500' }, color: '#0f172a' }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    let val = context.raw || 0;
+                                    let pct = ((val / tdee) * 100).toFixed(1);
+                                    return ` ${context.label}: ${val} kcal (${pct}%)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        window.onload = function () {
+            toggleNeatMode();
+            toggleEatMode();
+            toggleMacroFields();
+        };
+    </script>
+
+</body>
+
+</html>

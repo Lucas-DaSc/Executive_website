@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Évaluation Chronotype & MCTQ</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --surface: #f8fafc;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --accent: #2563eb;
+            --accent-light: #eff6ff;
+            --radius: 8px;
+            --transition: all 0.2s ease-in-out;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 40px;
+        }
+
+        /* Système d'onglets épuré */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 32px;
+            padding-bottom: 12px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: var(--radius);
+            transition: var(--transition);
+        }
+
+        .tab-btn:hover {
+            color: var(--text);
+        }
+
+        .tab-btn.active {
+            color: var(--accent);
+            background-color: var(--accent-light);
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+
+        .progress-bar {
+            height: 3px;
+            background-color: var(--border);
+            border-radius: 2px;
+            margin-bottom: 32px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--accent);
+            width: 0%;
+            transition: var(--transition);
+        }
+
+        .question-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        /* Inputs pour le MCTQ */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .input-field {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            font-size: 1rem;
+            color: var(--text);
+            outline: none;
+            width: 100%;
+            transition: var(--transition);
+        }
+
+        .input-field:focus {
+            border-color: var(--accent);
+        }
+
+        /* Boutons et cartes d'options */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: left;
+            font-size: 0.95rem;
+            color: var(--text);
+            width: 100%;
+        }
+
+        .option-card:hover {
+            border-color: var(--text-muted);
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .btn-primary {
+            background-color: var(--text);
+            color: var(--bg);
+            border: none;
+            padding: 12px 24px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Résultats */
+        .result-type {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 16px;
+        }
+
+        .result-description {
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+        }
+
+        .profile-details {
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .profile-detail-item {
+            font-size: 0.9rem;
+        }
+
+        .profile-detail-item strong {
+            color: var(--text);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Onglets de navigation -->
+        <div class="tabs">
+            <button class="tab-btn active" id="tab-breus" onclick="switchTest('breus')">Test Qualitatif (Breus)</button>
+            <button class="tab-btn" id="tab-mctq" onclick="switchTest('mctq')">Test Quantitatif (MCTQ)</button>
+        </div>
+
+        <!-- ZONE TEST 1 : DR BREUS -->
+        <div id="quiz-breus-section">
+            <div class="header">
+                <h1 id="breus-title">Profil comportemental</h1>
+                <p class="subtitle" id="breus-counter">Question 1 sur 7</p>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="breus-progress"></div>
+            </div>
+            <div id="breus-content">
+                <p class="question-title" id="breus-question-text"></p>
+                <div class="options-list" id="breus-options"></div>
+            </div>
+        </div>
+
+        <!-- ZONE TEST 2 : MCTQ -->
+        <div id="quiz-mctq-section" class="hidden">
+            <div class="header">
+                <h1 id="mctq-title">Munich ChronoType Questionnaire</h1>
+                <p class="subtitle" id="mctq-counter">Question 1 sur 14</p>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="mctq-progress"></div>
+            </div>
+            <div id="mctq-content">
+                <p class="question-title" id="mctq-question-text"></p>
+                <div id="mctq-input-container"></div>
+                <div class="nav-buttons">
+                    <button class="btn-primary" id="mctq-next-btn" onclick="nextMctq()">Suivant</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ZONE RÉSULTATS UNIQUE -->
+        <div id="result-screen" class="hidden">
+            <div class="header">
+                <h1>Analyse de votre Chronotype</h1>
+                <p class="subtitle" id="result-method-label">Profil calculé</p>
+            </div>
+            <div class="result-card">
+                <div class="result-type" id="result-animal">--</div>
+                <p class="result-description" id="result-desc">--</p>
+
+                <div class="profile-details">
+                    <div class="profile-detail-item">
+                        <strong>Fenêtre de productivité :</strong> <span id="res-cognitive">--</span>
+                    </div>
+                    <div class="profile-detail-item">
+                        <strong>Sommeil idéal :</strong> <span id="res-sleep">--</span>
+                    </div>
+                    <div class="profile-detail-item" id="row-msf">
+                        <strong>Point médian circadien corrigé (MSFsc) :</strong> <span id="res-msf">--</span>
+                    </div>
+                </div>
+                <button class="btn-primary" style="margin-top: 24px;" onclick="restartCurrentTest()">Recommencer le
+                    test</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DONNÉES STRUCTURÉES COMMUNES ---
+        const profiles = {
+            lion: { title: "Lion (Matinal)", desc: "Horloge biologique avancée (15% de la pop). Vous vous levez tôt sans effort et performez intensément le matin. Votre énergie chute drastiquement en fin d'après-midi.", cognitive: "08h00 - 12h00", sleep: "22h00 - 05h30" },
+            ours: { title: "Ours (Solaire)", desc: "Rythme calé sur le soleil (50% de la pop). Vous avez un besoin stable de 8h de sommeil. Votre pic d'éveil se situe en milieu/fin de matinée.", cognitive: "10h00 - 14h00", sleep: "23h00 - 07h00" },
+            loup: { title: "Loup (Nocturne)", desc: "Retard de phase biologique (15-20% de la pop). Le matin est laborieux, mais vos hormones de l'éveil culminent en soirée, favorisant la créativité nocturne.", cognitive: "17h00 - 00h00", sleep: "01h00 - 08h30" },
+            dauphin: { title: "Dauphin (Sommeil léger)", desc: "Vigilance fragmentée (10% de la pop). Sommeil physiologiquement instable et sensible au stress. Forte activité cérébrale et fatigue nerveuse chronique.", cognitive: "15h00 - 21h00", sleep: "23h30 - 06h30" }
+        };
+
+        // --- VARIABLES D'ÉTAT ---
+        let activeTab = 'breus';
+        let breusIndex = 0;
+        let breusScores = { lion: 0, ours: 0, loup: 0, dauphin: 0 };
+
+        let mctqIndex = 0;
+        let mctqAnswers = {};
+
+        // --- DESCRIPTIONS DES QUESTIONS ---
+        const breusQuestions = [
+            { text: "Si vous aviez une totale liberté, à quelle heure préféreriez-vous vous lever ?", options: [{ text: "05h00 - 06h30", w: { lion: 4, ours: 1, dauphin: 1 } }, { text: "06h30 - 08h30", w: { lion: 1, ours: 4, loup: 1 } }, { text: "08h30 - 11h00", w: { loup: 4, ours: 1 } }, { text: "Variable / Horaires chaotiques", w: { dauphin: 4, loup: 1 } }] },
+            { text: "Comment évaluez-vous votre vigilance dans la demi-heure après le réveil ?", options: [{ text: "Très alerte, esprit clair immédiatement", w: { lion: 4, ours: 1 } }, { text: "Relativement éveillé, besoin d'un temps de transition", w: { ours: 4, lion: 1, loup: 1 } }, { text: "Très embrumé, l'éveil prend plusieurs heures", w: { loup: 4 } }, { text: "Fatigué mais anxieux, l'esprit s'emballe déjà", w: { dauphin: 4 } }] },
+            { text: "À quelle heure commencez-vous à ressentir le besoin physiologique de dormir ?", options: [{ text: "Tôt (21h00 - 22h30)", w: { lion: 4, ours: 1 } }, { text: "Modérément (22h30 - 23h30)", w: { ours: 4, lion: 1, loup: 1 } }, { text: "Tard (23h30 - 01h30 ou plus)", w: { loup: 4 } }, { text: "Imprévisible, sujet aux insomnies de début de nuit", w: { dauphin: 4 } }] },
+            { text: "Quel créneau choisiriez-vous pour passer un examen de forte concentration ?", options: [{ text: "Matin tôt (08h00 - 10h00)", w: { lion: 4, dauphin: 1 } }, { text: "Fin de matinée (11h00 - 13h00)", w: { ours: 4, lion: 1 } }, { text: "Fin d'après-midi / Soirée (17h00 - 19h00 ou après)", w: { loup: 4 } }, { text: "Milieu de journée (13h00 - 15h00)", w: { ours: 2, lion: 2 } }] },
+            { text: "Quelle est votre relation vis-à-vis de la régularité de votre sommeil ?", options: [{ text: "Très rigide : les mêmes heures semaine et week-end", w: { lion: 4, ours: 2 } }, { text: "Plutôt stable : léger décalage le week-end (1h-2h)", w: { ours: 4, loup: 1 } }, { text: "Désalignée : dette de sommeil en semaine, grasses mats le week-end", w: { loup: 4 } }, { text: "Chaotique : sommeil léger, fragmenté et sensible au stress", w: { dauphin: 4 } }] },
+            { text: "Comment décririez-vous votre appétit au cours de la journée ?", options: [{ text: "Massif au réveil, faim immédiate", w: { lion: 4 } }, { text: "Équilibré, petit-déjeuner normal puis repas réguliers", w: { ours: 4 } }, { text: "Inexistant le matin, faim tardive ou nocturne", w: { loup: 4, dauphin: 1 } }, { text: "Variable, dicté par le stress ou la fatigue", w: { dauphin: 4 } }] },
+            { text: "Concernant votre tempérament général, vous vous considérez plutôt comme :", options: [{ text: "Stratégique, structuré, orienté vers les objectifs", w: { lion: 4 } }, { text: "Sociable, stable, appréciant le confort et le groupe", w: { ours: 4 } }, { text: "Créatif, impulsif, anticonformiste, aimant le risque", w: { loup: 4 } }, { text: "Perfectionniste, analytique, d'un naturel prudent ou inquiet", w: { dauphin: 4 } }] }
+        ];
+
+        const mctqQuestions = [
+            // Jours de travail
+            { id: "w_bed", text: "Jours de travail — À quelle heure allez-vous au lit ? (Ex: 22:30)", type: "time", block: "Bloc 1 : Jours de travail" },
+            { id: "w_prep", text: "Jours de travail — À quelle heure vous préparez-vous activement à dormir ? (Lumières éteintes)", type: "time", block: "Bloc 1 : Jours de travail" },
+            { id: "w_lat", text: "Jours de travail — De combien de minutes avez-vous besoin pour vous endormir ? (Minutes brute)", type: "number", min: 0, max: 240, placeholder: "Ex: 15", block: "Bloc 1 : Jours de travail" },
+            { id: "w_wake", text: "Jours de travail — À quelle heure vous réveillez-vous ?", type: "time", block: "Bloc 1 : Jours de travail" },
+            { id: "w_out", text: "Jours de travail — Après combien de minutes sortez-vous du lit ? (Inertie)", type: "number", min: 0, max: 120, placeholder: "Ex: 10", block: "Bloc 1 : Jours de travail" },
+            { id: "w_alarm", text: "Utilisez-vous un réveille-matin les jours de travail ?", type: "boolean", block: "Bloc 1 : Jours de travail" },
+            { id: "w_wake_before", text: "Si oui, vous réveillez-vous régulièrement avant que le réveil ne sonne ?", type: "boolean", block: "Bloc 1 : Jours de travail" },
+            // Jours de repos
+            { id: "f_bed", text: "Jours de repos — À quelle heure allez-vous au lit ?", type: "time", block: "Bloc 2 : Jours de repos" },
+            { id: "f_prep", text: "Jours de repos — À quelle heure vous préparez-vous activement à dormir ? (Lumières éteintes)", type: "time", block: "Bloc 2 : Jours de repos" },
+            { id: "f_lat", text: "Jours de repos — De combien de minutes avez-vous besoin pour vous endormir ?", type: "number", min: 0, max: 240, placeholder: "Ex: 20", block: "Bloc 2 : Jours de repos" },
+            { id: "f_wake", text: "Jours de repos — À quelle heure vous réveillez-vous ?", type: "time", block: "Bloc 2 : Jours de repos" },
+            { id: "f_out", text: "Jours de repos — Après combien de minutes sortez-vous du lit ?", type: "number", min: 0, max: 120, placeholder: "Ex: 15", block: "Bloc 2 : Jours de repos" },
+            { id: "f_alarm", text: "Votre heure de réveil les jours de repos est-elle due à l'utilisation d'un réveil ?", type: "boolean", block: "Bloc 2 : Jours de repos" },
+            { id: "f_disrupt", text: "Y a-t-il des raisons particulières qui vous empêchent de choisir librement vos horaires de sommeil les jours de repos ? (Enfants, animaux, contraintes obligatoires...)", type: "boolean", block: "Bloc 2 : Jours de repos" }
+        ];
+
+        // --- NAVIGATION LOGIQUE ---
+        function switchTest(testType) {
+            activeTab = testType;
+            document.getElementById('tab-breus').classList.toggle('active', testType === 'breus');
+            document.getElementById('tab-mctq').classList.toggle('active', testType === 'mctq');
+            document.getElementById('result-screen').classList.add('hidden');
+
+            if (testType === 'breus') {
+                document.getElementById('quiz-breus-section').classList.remove('hidden');
+                document.getElementById('quiz-mctq-section').classList.add('hidden');
+                initBreus();
+            } else {
+                document.getElementById('quiz-breus-section').classList.add('hidden');
+                document.getElementById('quiz-mctq-section').classList.remove('hidden');
+                initMctq();
+            }
+        }
+
+        // --- LOGIQUE TEST 1 : DR BREUS ---
+        function initBreus() {
+            breusIndex = 0;
+            breusScores = { lion: 0, ours: 0, loup: 0, dauphin: 0 };
+            showBreusQuestion();
+        }
+
+        function showBreusQuestion() {
+            const q = breusQuestions[breusIndex];
+            document.getElementById('breus-counter').innerText = `Question ${breusIndex + 1} sur ${breusQuestions.length}`;
+            document.getElementById('breus-progress').style.width = `${(breusIndex / breusQuestions.length) * 100}%`;
+            document.getElementById('breus-question-text').innerText = q.text;
+
+            const container = document.getElementById('breus-options');
+            container.innerHTML = '';
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-card';
+                btn.innerText = opt.text;
+                btn.onclick = () => {
+                    for (const key in opt.w) breusScores[key] += opt.w[key];
+                    breusIndex++;
+                    if (breusIndex < breusQuestions.length) showBreusQuestion();
+                    else showBreusResults();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function showBreusResults() {
+            let max = -1, winner = 'ours';
+            for (const key in breusScores) {
+                if (breusScores[key] > max) { max = breusScores[key]; winner = key; }
+            }
+            renderFinalUI("Test Comportemental (Méthode Breus)", winner, false);
+        }
+
+        // --- LOGIQUE TEST 2 : MCTQ (ALGORITHME CHRONOBIOLOGIQUE) ---
+        function initMctq() {
+            mctqIndex = 0;
+            mctqAnswers = {};
+            showMctqQuestion();
+        }
+
+        function showMctqQuestion() {
+            const q = mctqQuestions[mctqIndex];
+            document.getElementById('mctq-title').innerText = q.block;
+            document.getElementById('mctq-counter').innerText = `Question ${mctqIndex + 1} sur ${mctqQuestions.length}`;
+            document.getElementById('mctq-progress').style.width = `${(mctqIndex / mctqQuestions.length) * 100}%`;
+            document.getElementById('mctq-question-text').innerText = q.text;
+
+            const container = document.getElementById('mctq-input-container');
+            container.innerHTML = '';
+
+            if (q.type === 'time') {
+                container.innerHTML = `<input type="time" id="mctq-ans" class="input-field" required value="23:00">`;
+            } else if (q.type === 'number') {
+                container.innerHTML = `<input type="number" id="mctq-ans" class="input-field" min="${q.min}" max="${q.max}" placeholder="${q.placeholder}" required value="15">`;
+            } else if (q.type === 'boolean') {
+                container.innerHTML = `
+                <div class="options-list">
+                    <button class="option-card" onclick="submitMctqBool(true)">Oui</button>
+                    <button class="option-card" onclick="submitMctqBool(false)">Non</button>
+                </div>
+            `;
+                document.getElementById('mctq-next-btn').classList.add('hidden');
+                return;
+            }
+            document.getElementById('mctq-next-btn').classList.remove('hidden');
+        }
+
+        function submitMctqBool(val) {
+            const q = mctqQuestions[mctqIndex];
+            mctqAnswers[q.id] = val;
+            advanceMctq();
+        }
+
+        function nextMctq() {
+            const input = document.getElementById('mctq-ans');
+            if (!input || !input.value) return;
+            const q = mctqQuestions[mctqIndex];
+            mctqAnswers[q.id] = q.type === 'number' ? parseInt(input.value, 10) : input.value;
+            advanceMctq();
+        }
+
+        function advanceMctq() {
+            mctqIndex++;
+            if (mctqIndex < mctqQuestions.length) showMctqQuestion();
+            else calculateMctqResult();
+        }
+
+        // Convertisseur de chaînes "HH:MM" en minutes depuis minuit
+        function timeToMin(tStr) {
+            const [h, m] = tStr.split(':').map(Number);
+            return h * 60 + m;
+        }
+
+        // Convertisseur de minutes depuis minuit en chaîne "HH:MM"
+        function minToTimeStr(mins) {
+            let m = Math.round(mins) % 1440;
+            if (m < 0) m += 1440;
+            const h = Math.floor(m / 60);
+            const minsLeft = m % 60;
+            return `${String(h).padStart(2, '0')}:${String(minsLeft).padStart(2, '0')}`;
+        }
+
+        function calculateMctqResult() {
+            // 1. Instants d'endormissement (Heure de préparation + latence)
+            let sleep_w = timeToMin(mctqAnswers.w_prep) + mctqAnswers.w_lat;
+            let sleep_f = timeToMin(mctqAnswers.f_prep) + mctqAnswers.f_lat;
+
+            let wake_w = timeToMin(mctqAnswers.w_wake);
+            let wake_f = timeToMin(mctqAnswers.f_wake);
+
+            // Gestion du passage de minuit
+            if (sleep_w >= 1440) sleep_w -= 1440;
+            if (sleep_f >= 1440) sleep_f -= 1440;
+
+            // 2. Durées de sommeil réelles (SD_w et SD_f)
+            let sd_w = wake_w - sleep_w; if (sd_w < 0) sd_w += 1440;
+            let sd_f = wake_f - sleep_f; if (sd_f < 0) sd_f += 1440;
+
+            // 3. Milieu du sommeil brut les jours de repos (MSF)
+            let msf = sleep_f + (sd_f / 2);
+            if (msf >= 1440) msf -= 1440;
+
+            // 4. Correction de la dette de sommeil (Algorithme Roenneberg MSFsc)
+            let msf_sc = msf;
+            // La correction s'applique uniquement si le sujet ne met pas de réveil le week-end et dort plus que la semaine
+            if (!mctqAnswers.f_alarm && sd_f > sd_w) {
+                msf_sc = msf - ((sd_f - sd_w) / 2);
+                if (msf_sc < 0) msf_sc += 1440;
+            }
+
+            // 5. Attribution du chronotype animal selon le point médian MSFsc
+            // Seuils de référence en heures (Minutes depuis minuit)
+            let finalAnimal = 'ours';
+            if (msf_sc < 210) { // Avant 03h30 du matin
+                finalAnimal = 'lion';
+            } else if (msf_sc >= 210 && msf_sc < 315) { // Entre 03h30 et 05h15
+                finalAnimal = 'ours';
+            } else if (msf_sc >= 315 && msf_sc < 450) { // Entre 05h15 et 07h30
+                finalAnimal = 'loup';
+            } else { // Sommeil ultra tardif ou très morcelé
+                finalAnimal = (mctqAnswers.f_lat > 30) ? 'dauphin' : 'loup';
+            }
+
+            // Si l'utilisateur signale des anomalies de sommeil sévères
+            if (mctqAnswers.f_disrupt && mctqAnswers.f_lat > 25) {
+                finalAnimal = 'dauphin';
+            }
+
+            renderFinalUI("Évaluation Biologique (Munich MCTQ)", finalAnimal, minToTimeStr(msf_sc));
+        }
+
+        // --- AFFICHAGE COMMUN ---
+        function renderFinalUI(methodName, animalKey, msfValue) {
+            document.getElementById('quiz-breus-section').classList.add('hidden');
+            document.getElementById('quiz-mctq-section').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            const profile = profiles[animalKey];
+            document.getElementById('result-method-label').innerText = methodName;
+            document.getElementById('result-animal').innerText = profile.title;
+            document.getElementById('result-desc').innerText = profile.desc;
+            document.getElementById('res-cognitive').innerText = profile.cognitive;
+            document.getElementById('res-sleep').innerText = profile.sleep;
+
+            const rowMsf = document.getElementById('row-msf');
+            if (msfValue) {
+                rowMsf.classList.remove('hidden');
+                document.getElementById('res-msf').innerText = msfValue;
+            } else {
+                rowMsf.classList.add('hidden');
+            }
+        }
+
+        function restartCurrentTest() {
+            switchTest(activeTab);
+        }
+
+        // Lancement
+        window.onload = () => { initBreus(); };
+    </script>
+</body>
+
+</html>

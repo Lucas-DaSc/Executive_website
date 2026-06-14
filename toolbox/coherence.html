@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide Respiratoire HRV Pro</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --surface: #f8fafc;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --accent: #2563eb;
+            --accent-light: #eff6ff;
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 40px;
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+            position: relative;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+
+        /* Container de la Bulle */
+        .exercise-area {
+            height: 240px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        /* SVG de progression */
+        .progress-ring {
+            position: absolute;
+            width: 240px;
+            height: 240px;
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring__circle {
+            stroke: var(--accent);
+            stroke-dasharray: 691;
+            /* 2 * PI * r (r=110) */
+            stroke-dashoffset: 691;
+            transition: stroke-dashoffset 5s linear;
+        }
+
+        .bubble-outer {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background-color: var(--accent-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 5s linear;
+            z-index: 2;
+        }
+
+        .bubble-inner {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            opacity: 0.15;
+            transition: transform 5s linear, opacity 5s linear;
+        }
+
+        .instruction {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--accent);
+            height: 30px;
+            margin-bottom: 16px;
+        }
+
+        .timer-display {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .controls-group {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .btn-secondary {
+            background-color: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: calc(var(--radius) - 4px);
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .btn-secondary.active {
+            background-color: var(--accent-light);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-main {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: var(--transition);
+        }
+
+        .btn-main:hover {
+            opacity: 0.9;
+        }
+
+        /* Animations de respiration */
+        .inhale {
+            transform: scale(1.2);
+        }
+
+        .inhale .bubble-inner {
+            transform: scale(4);
+            opacity: 0.35;
+        }
+
+        .exhale {
+            transform: scale(1);
+        }
+
+        .exhale .bubble-inner {
+            transform: scale(1);
+            opacity: 0.15;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Guide Respiratoire HRV</h1>
+        <p class="subtitle">Cohérence Cardiaque • Fréquence 0.1Hz</p>
+
+        <div class="exercise-area">
+            <svg class="progress-ring">
+                <circle class="progress-ring__circle" stroke-width="3" fill="transparent" r="110" cx="120" cy="120" />
+            </svg>
+            <div class="bubble-outer" id="bubble">
+                <div class="bubble-inner"></div>
+            </div>
+        </div>
+
+        <div class="instruction" id="instruction">Prêt à commencer ?</div>
+        <div class="timer-display" id="timerDisplay">05:00</div>
+
+        <div class="controls-group" id="controls">
+            <button class="btn-secondary" id="audioToggle">
+                <span id="audioIcon">🔈</span> Son Off
+            </button>
+        </div>
+
+        <button class="btn-main" id="startBtn">Commencer la session</button>
+    </div>
+
+    <script>
+        const bubble = document.getElementById('bubble');
+        const instruction = document.getElementById('instruction');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const startBtn = document.getElementById('startBtn');
+        const controls = document.getElementById('controls');
+        const audioToggle = document.getElementById('audioToggle');
+        const audioIcon = document.getElementById('audioIcon');
+        const circle = document.querySelector('.progress-ring__circle');
+
+        const selectedDuration = 300;
+        let timeLeft = selectedDuration;
+        let timerInterval, breathInterval, audioCtx, gainNode;
+        let isPlaying = false;
+        let soundEnabled = localStorage.getItem('hrv-sound') === 'true';
+
+        // INITIALISATION FIXE DU LISERÉ : Évite le saut au premier cycle
+        circle.style.strokeDashoffset = '691';
+
+        updateAudioUI();
+
+        audioToggle.addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            localStorage.setItem('hrv-sound', soundEnabled);
+            updateAudioUI();
+
+            if (!soundEnabled && gainNode && audioCtx) {
+                gainNode.gain.cancelScheduledValues(audioCtx.currentTime);
+                gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            }
+        });
+
+        function updateAudioUI() {
+            if (soundEnabled) {
+                audioToggle.classList.add('active');
+                audioIcon.textContent = "🔊";
+                audioToggle.childNodes[2].textContent = " Son On";
+            } else {
+                audioToggle.classList.remove('active');
+                audioIcon.textContent = "🔈";
+                audioToggle.childNodes[2].textContent = " Son Off";
+            }
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            const secs = (timeLeft % 60).toString().padStart(2, '0');
+            timerDisplay.textContent = `${mins}:${secs}`;
+        }
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                gainNode = audioCtx.createGain();
+
+                const oscillator = audioCtx.createOscillator();
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(220, audioCtx.currentTime);
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                oscillator.start();
+            }
+        }
+
+        function playTone(direction) {
+            if (!soundEnabled || !audioCtx) return;
+            const now = audioCtx.currentTime;
+            gainNode.gain.cancelScheduledValues(now);
+            if (direction === 'in') {
+                gainNode.gain.setValueAtTime(gainNode.gain.value, now);
+                gainNode.gain.linearRampToValueAtTime(0.12, now + 4.8);
+            } else {
+                gainNode.gain.setValueAtTime(gainNode.gain.value, now);
+                gainNode.gain.linearRampToValueAtTime(0.001, now + 4.8);
+            }
+        }
+
+        function runBreathCycle() {
+            if (!isPlaying) return;
+
+            // --- INSPIRATION (5s) ---
+            instruction.textContent = "Inspirez...";
+            bubble.classList.replace('exhale', 'inhale') || bubble.classList.add('inhale');
+
+            circle.style.transition = 'stroke-dashoffset 5s linear';
+            circle.style.strokeDashoffset = '0';
+
+            if (soundEnabled) initAudio();
+            playTone('in');
+            if (navigator.vibrate) navigator.vibrate(60);
+
+            // --- EXPIRATION (5s) ---
+            setTimeout(() => {
+                if (!isPlaying) return;
+                instruction.textContent = "Expirez...";
+                bubble.classList.replace('inhale', 'exhale');
+
+                circle.style.transition = 'stroke-dashoffset 5s linear';
+                circle.style.strokeDashoffset = '691';
+
+                playTone('out');
+                if (navigator.vibrate) navigator.vibrate([40, 40]);
+            }, 5000);
+        }
+
+        function toggleSession() {
+            if (!isPlaying) {
+                isPlaying = true;
+                startBtn.textContent = "Arrêter la session";
+                controls.style.opacity = "0.3";
+                controls.style.pointerEvents = "none";
+
+                if (soundEnabled) initAudio();
+
+                runBreathCycle();
+                breathInterval = setInterval(runBreathCycle, 10000);
+
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay();
+                    if (timeLeft <= 0) stopSession(true);
+                }, 1000);
+            } else {
+                stopSession(false);
+            }
+        }
+
+        function stopSession(isFinished) {
+            isPlaying = false;
+            clearInterval(timerInterval);
+            clearInterval(breathInterval);
+
+            if (gainNode && audioCtx) {
+                gainNode.gain.cancelScheduledValues(audioCtx.currentTime);
+                gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            }
+
+            bubble.classList.remove('inhale', 'exhale');
+            circle.style.transition = 'none';
+            circle.style.strokeDashoffset = '691';
+
+            startBtn.textContent = "Commencer la session";
+            instruction.textContent = isFinished ? "Session terminée ! Restez serein." : "Prêt à commencer ?";
+            controls.style.opacity = "1";
+            controls.style.pointerEvents = "auto";
+
+            timeLeft = selectedDuration;
+            updateTimerDisplay();
+        }
+
+        startBtn.addEventListener('click', toggleSession);
+        updateTimerDisplay();
+    </script>
+</body>
+
+</html>
