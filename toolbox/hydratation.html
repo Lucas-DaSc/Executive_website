@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Score d'Hydratation & Focus Cognitif</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --surface: #f8fafc;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --accent: #2563eb;
+            --accent-light: #eff6ff;
+            --success: #16a34a;
+            --success-light: #f0fdf4;
+            --danger: #dc2626;
+            --danger-light: #fef2f2;
+            --radius: 12px;
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .calculator-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: -0.025em;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.925rem;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-row .input-group {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background-color: var(--surface);
+            color: var(--text);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        input[type="number"]:focus,
+        select:focus {
+            border-color: var(--accent);
+            background-color: var(--bg);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .results {
+            margin-top: 28px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .result-box {
+            background-color: var(--surface);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .result-box .label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .result-box .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        /* Classes dynamiques pour le statut du Focus */
+        .result-box.good .value {
+            color: var(--success);
+        }
+
+        .result-box.warning .value {
+            color: #d97706;
+        }
+
+        .result-box.danger .value {
+            color: var(--danger);
+        }
+
+        .status-box {
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            transition: var(--transition);
+        }
+
+        .status-box.status-danger {
+            background-color: var(--danger-light);
+            border: 1px solid #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-box.status-danger strong {
+            color: #7f1d1d;
+        }
+
+        .status-box.status-success {
+            background-color: var(--success-light);
+            border: 1px solid #dcfce7;
+            color: #166534;
+        }
+
+        .status-box.status-success strong {
+            color: #14532d;
+        }
+
+        .status-icon {
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="calculator-card">
+        <h2>Hydratation & Focus Cognitif</h2>
+        <p class="subtitle">Suivez l'impact direct de votre consommation d'eau en temps réel sur vos capacités
+            cérébrales.</p>
+
+        <div class="input-row">
+            <div class="input-group">
+                <label for="weight">Votre poids (kg)</label>
+                <input type="number" id="weight" value="70" min="30" max="200" step="1">
+            </div>
+            <div class="input-group">
+                <label for="consumed">Eau bue (Litres)</label>
+                <input type="number" id="consumed" value="1.2" min="0" max="10" step="0.1">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="activity">Niveau d'activité quotidienne</label>
+            <select id="activity">
+                <option value="sedentary">Sédentaire (Bureau / Repos)</option>
+                <option value="moderate">Modéré (Marche / Activité légère)</option>
+                <option value="intense">Intense (Sport / Travail physique)</option>
+            </select>
+        </div>
+
+        <div class="results">
+            <div class="result-grid">
+                <div class="result-box">
+                    <div class="label">Requis / Différentiel</div>
+                    <div class="value" id="water-diff">2.45 L</div>
+                </div>
+                <div class="result-box" id="focus-box">
+                    <div class="label">Focus Cognitif</div>
+                    <div class="value" id="focus-score">100%</div>
+                </div>
+            </div>
+
+            <div id="status-container" class="status-box status-danger">
+                <div class="status-icon" id="status-icon">⚠️</div>
+                <div id="status-text">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const weightInput = document.getElementById('weight');
+        const consumedInput = document.getElementById('consumed');
+        const activitySelect = document.getElementById('activity');
+
+        const waterDiffDisplay = document.getElementById('water-diff');
+        const focusScoreDisplay = document.getElementById('focus-score');
+        const focusBox = document.getElementById('focus-box');
+        const statusContainer = document.getElementById('status-container');
+        const statusIcon = document.getElementById('status-icon');
+        const statusText = document.getElementById('status-text');
+
+        function updateMetrics() {
+            const weight = parseFloat(weightInput.value) || 0;
+            const consumed = parseFloat(consumedInput.value) || 0;
+
+            if (weight <= 0) {
+                waterDiffDisplay.textContent = "--";
+                focusScoreDisplay.textContent = "--";
+                statusText.innerHTML = "Veuillez entrer un poids valide.";
+                return;
+            }
+
+            // 1. Calcul du besoin théorique (ml)
+            let activityFactor = 35;
+            if (activitySelect.value === 'moderate') activityFactor = 40;
+            if (activitySelect.value === 'intense') activityFactor = 45;
+
+            const waterRequired = (weight * activityFactor) / 1000; // En Litres
+
+            // 2. Calcul du différentiel
+            const diff = consumed - waterRequired;
+
+            // Affichage du requis et du déficit restant
+            if (diff < 0) {
+                waterDiffDisplay.innerHTML = `${waterRequired.toFixed(2)}L <span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted);">(-${Math.abs(diff).toFixed(2)}L)</span>`;
+            } else {
+                waterDiffDisplay.innerHTML = `${waterRequired.toFixed(2)}L <span style="font-size:0.8rem; font-weight:normal; color:var(--success);">(Atteint)</span>`;
+            }
+
+            // 3. Calcul mathématique de l'impact sur le focus cognitif
+            // Règle : Perte de 2% du poids corporel en eau = -20% de concentration.
+            // Donc, 1% de perte de poids corporel en eau = -10% de concentration.
+
+            let focusScore = 100;
+            let statusHTML = "";
+
+            if (diff < 0) {
+                const waterDeficitKg = Math.abs(diff); // 1L d'eau = 1kg
+                const bodyLossPercentage = (waterDeficitKg / weight) * 100; // % de perte de poids en eau
+
+                // Calcul de la baisse de focus (1% perte = -10% focus)
+                const focusDrop = bodyLossPercentage * 10;
+                focusScore = Math.max(80, 100 - focusDrop); // On capte la baisse à -20% max selon la règle énoncée
+
+                // Gestion du design du Focus Box en fonction de la sévérité
+                focusBox.className = "result-box";
+                if (bodyLossPercentage >= 2) {
+                    focusBox.classList.add("danger");
+                    statusContainer.className = "status-box status-danger";
+                    statusIcon.textContent = "🚨";
+                    statusHTML = `<strong>Déshydratation cérébrale !</strong> Vous avez perdu plus de 2% de votre masse en eau. Votre concentration est amputée de <strong>-${(100 - focusScore).toFixed(0)}%</strong>. Buvez immédiatement.`;
+                } else if (bodyLossPercentage > 0.5) {
+                    focusBox.classList.add("warning");
+                    statusContainer.className = "status-box status-danger"; // Garde le style d'alerte léger
+                    statusContainer.style.borderColor = "#fef3c7";
+                    statusContainer.style.backgroundColor = "#fffbeb";
+                    statusContainer.style.color = "#92400e";
+                    statusIcon.textContent = "⚠️";
+                    statusHTML = `<strong>Focus en baisse :</strong> Manque d'eau détecté. Votre niveau de concentration baisse de <strong>-${(100 - focusScore).toFixed(0)}%</strong>.`;
+                } else {
+                    focusBox.className = "result-box";
+                    statusContainer.className = "status-box status-success";
+                    statusIcon.textContent = "💧";
+                    statusHTML = `Vous êtes proche de votre objectif. Hydratation correcte, impact cognitif minime.`;
+                }
+            } else {
+                // Hydratation optimale ou supérieure
+                focusScore = 100;
+                focusBox.className = "result-box good";
+                statusContainer.className = "status-box status-success";
+                statusIcon.textContent = "✨";
+                statusHTML = `<strong>Focus Optimal !</strong> Votre cerveau dispose de toute l'eau nécessaire pour fonctionner à 100% de ses capacités.`;
+            }
+
+            focusScoreDisplay.textContent = `${focusScore.toFixed(0)}%`;
+            statusText.innerHTML = statusHTML;
+        }
+
+        // Écouteurs d'événements
+        weightInput.addEventListener('input', updateMetrics);
+        consumedInput.addEventListener('input', updateMetrics);
+        activitySelect.addEventListener('change', updateMetrics);
+
+        // Initialisation
+        updateMetrics();
+    </script>
+
+</body>
+
+</html>
