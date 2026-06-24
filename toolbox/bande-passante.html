@@ -158,9 +158,12 @@
             text-align: center;
         }
 
-        /* Custom Range Slider */
+        /* 1. Le conteneur global du slider */
         input[type="range"] {
             -webkit-appearance: none;
+            /* Pour Chrome/Safari */
+            appearance: none;
+            /* Version standard */
             width: 100%;
             height: 6px;
             background: var(--border);
@@ -169,6 +172,7 @@
             margin: 0.5rem 0;
         }
 
+        /* 2. Le bouton (Thumb) - Version WebKit (Chrome, Safari, Edge) */
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -178,10 +182,28 @@
             background: var(--accent);
             cursor: pointer;
             transition: var(--transition);
+            /* Astuce : centre le bouton verticalement si la piste est très fine */
+            margin-top: -6px;
         }
 
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.15);
+        /* 3. Le bouton (Thumb) - Version Firefox */
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border: none;
+            /* Firefox ajoute une bordure par défaut */
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        /* Bonus : Optionnel mais recommandé pour Firefox (la piste) */
+        input[type="range"]::-moz-range-track {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
         }
     </style>
 </head>
