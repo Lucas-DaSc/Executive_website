@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Profil de Récupération Active</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --surface: #f8fafc;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --accent: #2563eb;
+            --radius: 8px;
+            --transition: all 0.2s ease-in-out;
+
+            /* Couleurs des profils de récupération */
+            --cardio: #06b6d4;
+            --force: #f43f5e;
+            --yoga: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 640px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: calc(var(--radius) * 2);
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+        }
+
+        header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        /* Panneau de Verdict */
+        .verdict-card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 2.5rem;
+            transition: var(--transition);
+        }
+
+        .verdict-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .verdict-profile {
+            font-size: 1.8rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .verdict-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Sliders de diagnostic */
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .slider-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .slider-value-badge {
+            font-size: 0.95rem;
+            font-weight: 700;
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            padding: 0.15rem 0.6rem;
+            border-radius: 4px;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        /* Message d'aide contextuel à la jauge */
+        .slider-dynamic-hint {
+            font-size: 0.825rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            min-height: 1.2rem;
+            transition: color 0.15s ease;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            outline: none;
+            margin: 0.25rem 0;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Profil de Récupération Active</h1>
+            <p class="subtitle">Déterminez le protocole physique optimal pour restaurer votre balance neuro-chimique et
+                éliminer la fatigue executive.</p>
+        </header>
+
+        <!-- Affichage du Verdict en Temps Réel -->
+        <div class="verdict-card" id="verdictCard">
+            <div class="verdict-title">Protocole Recommandé</div>
+            <div class="verdict-profile" id="profileDisplay">Analyse en cours...</div>
+            <div class="verdict-desc" id="descDisplay">Ajustez vos marqueurs de fatigue pour générer votre ordonnance de
+                récupération.</div>
+        </div>
+
+        <!-- Curseur 1 : Agitation / Cortisol -->
+        <div class="slider-group">
+            <div class="slider-header">
+                <span class="slider-title">État d'anxiété, stress & rumination</span>
+                <span class="slider-value-badge" id="badgeStress">5 / 10</span>
+            </div>
+            <input type="range" id="inputStress" min="1" max="10" value="5">
+            <div class="slider-dynamic-hint" id="hintStress">--</div>
+        </div>
+
+        <!-- Curseur 2 : Drive / Motivation / Dopamine -->
+        <div class="slider-group">
+            <div class="slider-header">
+                <span class="slider-title">Niveau d'entrain & clarté mentale (Drive)</span>
+                <span class="slider-value-badge" id="badgeDrive">5 / 10</span>
+            </div>
+            <input type="range" id="inputDrive" min="1" max="10" value="5">
+            <div class="slider-dynamic-hint" id="hintDrive">--</div>
+        </div>
+
+        <!-- Curseur 3 : Tension Physique / Structurelle -->
+        <div class="slider-group">
+            <div class="slider-header">
+                <span class="slider-title">Sensation de fatigue corporelle & raideurs</span>
+                <span class="slider-value-badge" id="badgeBody">5 / 10</span>
+            </div>
+            <input type="range" id="inputBody" min="1" max="10" value="5">
+            <div class="slider-dynamic-hint" id="hintBody">--</div>
+        </div>
+    </div>
+
+    <script>
+        const inputStress = document.getElementById('inputStress');
+        const inputDrive = document.getElementById('inputDrive');
+        const inputBody = document.getElementById('inputBody');
+
+        const badgeStress = document.getElementById('badgeStress');
+        const badgeDrive = document.getElementById('badgeDrive');
+        const badgeBody = document.getElementById('badgeBody');
+
+        const hintStress = document.getElementById('hintStress');
+        const hintDrive = document.getElementById('hintDrive');
+        const hintBody = document.getElementById('hintBody');
+
+        const profileDisplay = document.getElementById('profileDisplay');
+        const descDisplay = document.getElementById('descDisplay');
+
+        // Dictionnaires de paliers pour aider à jauger
+        const hints = {
+            stress: {
+                low: "1-3 : Esprit calme, détendu ou sous un stress sain parfaitement géré.",
+                med: "4-6 : Rumination latente, pensées qui s'éparpillent, agacement discret.",
+                high: "7-10 : Surchauffe mentale, anxiété aiguë, incapacité à débrancher le cerveau."
+            },
+            drive: {
+                low: "1-3 : Brouillard mental complet, apathie face aux tâches, manque de motivation.",
+                med: "4-6 : Énergie linéaire mais sans enthousiasme, focus dispersé.",
+                high: "7-10 : Esprit ultra-alerte, motivation élevée, envie d'agir immédiate."
+            },
+            body: {
+                low: "1-3 : Corps disponible, muscles légers, aucune douleur ou raideur notable.",
+                med: "4-6 : Fatigue posturale, trapèzes ou bas du dos légèrement tendus.",
+                high: "7-10 : Léthargie physique lourde, articulations verrouillées, épuisement musculaire."
+            }
+        };
+
+        function updateHintsAndBadges(stress, drive, body) {
+            // Mise à jour des badges numériques 1-10
+            badgeStress.textContent = `${stress} / 10`;
+            badgeDrive.textContent = `${drive} / 10`;
+            badgeBody.textContent = `${body} / 10`;
+
+            // Logique de sélection des textes d'aide contextuels
+            hintStress.textContent = stress <= 3 ? hints.stress.low : (stress <= 6 ? hints.stress.med : hints.stress.high);
+            hintDrive.textContent = drive <= 3 ? hints.drive.low : (drive <= 6 ? hints.drive.med : hints.drive.high);
+            hintBody.textContent = body <= 3 ? hints.body.low : (body <= 6 ? hints.body.med : hints.body.high);
+        }
+
+        function evaluateProfile() {
+            const stress = parseInt(inputStress.value);
+            const drive = parseInt(inputDrive.value);
+            const body = parseInt(inputBody.value);
+
+            // Actualisation des indications textuelles et des chiffres
+            updateHintsAndBadges(stress, drive, body);
+
+            let profileName = "";
+            let profileDesc = "";
+            let profileColor = "";
+
+            // Algorithme de décision
+            if (body >= 7 || (stress >= 7 && body >= 5)) {
+                profileName = "Yoga, Mobilité & Respiration";
+                profileColor = "var(--yoga)";
+                profileDesc = "Votre système nerveux central est saturé et votre corps est physiquement verrouillé. Un entraînement intense ne ferait qu'aggraver votre fatigue systémique. Optez pour 20 à 30 minutes de mobilité fluide, de yin yoga ou de cohérence cardiaque pour activer le système parasympathique et déclencher la reconstruction cellulaire profonde.";
+            }
+            else if (drive <= 4 && stress <= 6) {
+                profileName = "Force Neuromusculaire Courte";
+                profileColor = "var(--force)";
+                profileDesc = "Vous souffrez d'un déficit temporaire en dopamine (brouillard mental/apathie), mais votre corps n'est pas structurellement épuisé. Le remède est un choc nerveux pur : une session courte (20 min) de renforcement à haute intensité ou de force pure (kettlebell, exercices polyarticulaires lourds). Cela va réveiller vos récepteurs dopaminergiques et restaurer votre vigilance sans vider vos réserves de glycogène.";
+            }
+            else {
+                profileName = "Cardio Zone 2 Synchrone";
+                profileColor = "var(--cardio)";
+                profileDesc = "Votre cerveau est inondé de cortisol et d'adrénaline (stress mental élevé), mais vos muscles restent disponibles. Le meilleur moyen de purger ces hormones du stress est un effort aérobie continu en Zone 2 (course lente, vélo où vous pouvez maintenir une conversation). 30 à 45 minutes vont oxygéner le cortex, faire baisser la tension artérielle et métaboliser le stress accumulé.";
+            }
+
+            // Application de la couleur dynamique de la DA aux éléments clés
+            profileDisplay.textContent = profileName;
+            profileDisplay.style.color = profileColor;
+            descDisplay.textContent = profileDesc;
+
+            document.querySelectorAll('input[type="range"]').forEach(slider => {
+                slider.style.setProperty('--accent', profileColor);
+            });
+        }
+
+        // Écouteurs d'événements
+        [inputStress, inputDrive, inputBody].forEach(slider => {
+            slider.addEventListener('input', evaluateProfile);
+        });
+
+        // Initialisation
+        evaluateProfile();
+    </script>
+
+</body>
+
+</html>

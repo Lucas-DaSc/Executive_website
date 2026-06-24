@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Échelle Allostatique du Stress</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --surface: #f8fafc;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --accent: #2563eb;
+            --accent-light: #eff6ff;
+            --radius: 8px;
+            --transition: all 0.2s ease-in-out;
+
+            /* Échelles de gravité de la charge */
+            --homeostasie: #10b981;
+            --allostasie-legere: #84cc16;
+            --allostasie-moderee: #eab308;
+            --surcharge: #f97316;
+            --rupture: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 680px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: calc(var(--radius) * 2);
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+        }
+
+        header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        /* Tableau de bord de la charge allostatique */
+        .dashboard-card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .charge-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .charge-value {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .charge-status {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .charge-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Groupes de systèmes somatiques */
+        .system-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .system-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.25rem;
+        }
+
+        .system-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: var(--surface);
+            padding: 0.1rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .symptoms-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        @media (max-width: 500px) {
+            .symptoms-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .symptom-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            user-select: none;
+        }
+
+        .symptom-item:hover {
+            background-color: var(--surface);
+        }
+
+        .symptom-item.selected {
+            background-color: var(--accent-light);
+            border-color: var(--accent);
+        }
+
+        .symptom-item input[type="checkbox"] {
+            margin-top: 0.2rem;
+            width: 1.1rem;
+            height: 1.1rem;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        .symptom-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Échelle de Symptomatologie Allostatique</h1>
+            <p class="subtitle">Auto-diagnostic de la somatisation du stress : mesurez l'impact de l'usure nerveuse
+                accumulée sur vos systèmes biologiques.</p>
+        </header>
+
+        <div class="dashboard-card">
+            <div class="charge-title">Indice de Charge Allostatique</div>
+            <div class="charge-value" id="indexDisplay">0%</div>
+            <div class="charge-status" id="statusDisplay">Homéostasie Équilibrée</div>
+            <div class="charge-desc" id="descDisplay">Sélectionnez les signaux physiques ou cognitifs persistants au
+                cours des dernières semaines.</div>
+        </div>
+
+        <div id="systemsContainer">
+        </div>
+    </div>
+
+    <script>
+        // Cartographie des somatisations par grands systèmes biologiques
+        const allostaticData = [
+            {
+                system: "Système Musculaire & Postural",
+                symptoms: [
+                    "Tensions cervicales ou trapèzes contractés de manière chronique",
+                    "Maux de dos (lombaire/dorsal) s'intensifiant en fin de journée",
+                    "Sensation de mâchoire serrée ou bruxisme (dents qui grincent la nuit)",
+                    "Tremblements mineurs involontaires (paupière qui saute, mains)"
+                ]
+            },
+            {
+                system: "Système Digestif & Métabolique",
+                symptoms: [
+                    "Spasmes intestinaux, ballonnements ou inconforts gastriques réguliers",
+                    "Acidité d'estomac ou reflux gastro-œsophagien (RGO)",
+                    "Modification brutale de l'appétit (perte totale ou fringales compulsives)",
+                    "Ralentissement général de la digestion après les repas"
+                ]
+            },
+            {
+                system: "Système Cardiovasculaire & Énergétique",
+                symptoms: [
+                    "Palpitations isolées ou impression de rythme cardiaque instable au repos",
+                    "Extrémités (mains, pieds) anormalement froides ou moites",
+                    "Micro-vertiges au lever ou légères sensations d'oppression thoracique",
+                    "Fatigue massive dès le réveil, indépendamment des heures de sommeil"
+                ]
+            },
+            {
+                system: "Système Cognitif & Émotionnel",
+                symptoms: [
+                    "Difficulté à fixer son attention ou pertes de mémoire à court terme",
+                    "Sursaut excessif au moindre bruit ou irritabilité immédiate",
+                    "Réveils nocturnes systématiques (souvent entre 3h et 5h du matin)",
+                    "Hyper-vigilance mentale (cerveau qui tourne en boucle sans fin)"
+                ]
+            }
+        ];
+
+        const container = document.getElementById('systemsContainer');
+        const indexDisplay = document.getElementById('indexDisplay');
+        const statusDisplay = document.getElementById('statusDisplay');
+        const descDisplay = document.getElementById('descDisplay');
+
+        let totalSymptomsCount = 0;
+
+        // Rendu dynamique de l'interface
+        function init() {
+            allostaticData.forEach((group, groupIndex) => {
+                const section = document.createElement('div');
+                section.classList.add('system-section');
+
+                section.innerHTML = `
+                <div class="system-title">
+                    <span>${group.system}</span>
+                    <span class="system-badge" id="badge-${groupIndex}">0 / ${group.symptoms.length}</span>
+                </div>
+                <div class="symptoms-grid"></div>
+            `;
+
+                const grid = section.querySelector('.symptoms-grid');
+
+                group.symptoms.forEach((symptom, sympIndex) => {
+                    totalSymptomsCount++;
+                    const item = document.createElement('div');
+                    item.classList.add('symptom-item');
+
+                    const checkboxId = `symp-${groupIndex}-${sympIndex}`;
+                    item.innerHTML = `
+                    <input type="checkbox" id="${checkboxId}" data-group="${groupIndex}">
+                    <label class="symptom-label" for="${checkboxId}">${symptom}</label>
+                `;
+
+                    // Interactivité globale sur la carte
+                    item.addEventListener('click', (e) => {
+                        const checkbox = item.querySelector('input[type="checkbox"]');
+                        if (e.target !== checkbox && e.target.tagName !== 'LABEL') {
+                            checkbox.checked = !checkbox.checked;
+                        }
+                        toggleItemState(item, checkbox.checked);
+                        updateScores();
+                    });
+
+                    // Écouter les changements directs sur la checkbox
+                    item.querySelector('input').addEventListener('change', (e) => {
+                        toggleItemState(item, e.target.checked);
+                        updateScores();
+                    });
+
+                    grid.appendChild(item);
+                });
+
+                container.appendChild(section);
+            });
+        }
+
+        function toggleItemState(element, isChecked) {
+            if (isChecked) {
+                element.classList.add('selected');
+            } else {
+                element.classList.remove('selected');
+            }
+        }
+
+        function updateScores() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            let checkedCount = 0;
+
+            // Initialiser les compteurs par groupe
+            const groupCounts = {};
+            allostaticData.forEach((_, index) => groupCounts[index] = 0);
+
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    checkedCount++;
+                    const gIndex = cb.getAttribute('data-group');
+                    groupCounts[gIndex]++;
+                }
+            });
+
+            // Mettre à jour les badges de sous-systèmes
+            allostaticData.forEach((group, index) => {
+                document.getElementById(`badge-${index}`).textContent = `${groupCounts[index]} / ${group.symptoms.length}`;
+            });
+
+            // Calculer l'index allostatique en pourcentage
+            const percent = Math.round((checkedCount / totalSymptomsCount) * 100);
+            indexDisplay.textContent = `${percent}%`;
+
+            // Diagnostic adaptatif selon la littérature sur le stress chronique
+            if (percent === 0) {
+                indexDisplay.style.color = "var(--text-muted)";
+                statusDisplay.textContent = "Homéostasie Équilibrée";
+                statusDisplay.style.color = "var(--homeostasie)";
+                descDisplay.textContent = "Aucun marqueur allostatique détecté. Vos systèmes biologiques récupèrent correctement.";
+            } else if (percent <= 25) {
+                indexDisplay.style.color = "var(--allostasie-legere)";
+                statusDisplay.textContent = "Allostasie Neutre (Phase d'adaptation)";
+                statusDisplay.style.color = "var(--allostasie-legere)";
+                descDisplay.textContent = "Signaux d'alerte discrets. Le corps compense l'effort demandé, mais veillez à intégrer des micro-pauses.";
+            } else if (percent <= 50) {
+                indexDisplay.style.color = "var(--allostasie-moderee)";
+                statusDisplay.textContent = "Charge Allostatique Modérée";
+                statusDisplay.style.color = "var(--allostasie-moderee)";
+                descDisplay.textContent = "L'activation répétée de l'axe du stress commence à impacter le physique. Le système nerveux peine à revenir au calme.";
+            } else if (percent <= 75) {
+                indexDisplay.style.color = "var(--surcharge)";
+                statusDisplay.textContent = "Surcharge Allostatique Avancée";
+                statusDisplay.style.color = "var(--surcharge)";
+                descDisplay.textContent = "Le corps puise de façon critique dans ses réserves. Risque élevé de somatisation sévère. Une réduction drastique des stresseurs est requise.";
+            } else {
+                indexDisplay.style.color = "var(--rupture)";
+                statusDisplay.textContent = "Rupture de Compensation";
+                statusDisplay.style.color = "var(--rupture)";
+                descDisplay.textContent = "Épuisement allostatique multi-systémique. Le corps n'arrive plus à s'autoréguler. Consultation médicale ou repos strict vivement conseillés.";
+            }
+        }
+
+        init();
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur de Bande Passante Mentale</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --surface: #f8fafc;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --accent: #2563eb;
+            --accent-light: #eff6ff;
+            --radius: 8px;
+            --transition: all 0.2s ease-in-out;
+
+            /* Indicateurs de charge cognitive */
+            --optimal: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 640px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: calc(var(--radius) * 2);
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+        }
+
+        header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Panneau de Résultats (Score) */
+        .score-card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            transition: var(--transition);
+        }
+
+        .score-flex {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .score-block {
+            flex: 1;
+        }
+
+        .score-value {
+            font-size: 2.75rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+
+        .score-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .divider {
+            width: 1px;
+            height: 50px;
+            background-color: var(--border);
+        }
+
+        .score-verdict {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .score-feedback {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Formulaire / Sliders */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .input-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .input-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .input-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: -0.25rem;
+        }
+
+        .input-count {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent);
+            background-color: var(--accent-light);
+            padding: 0.1rem 0.5rem;
+            border-radius: 4px;
+            min-width: 45px;
+            text-align: center;
+        }
+
+        /* Custom Range Slider */
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            outline: none;
+            margin: 0.5rem 0;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Calculateur de Bande Passante Mentale</h1>
+            <p class="subtitle">Mesurez l'indice de coût de votre switch attentionnel (Task-Switching Cost)</p>
+        </header>
+
+        <div class="score-card">
+            <div class="score-flex">
+                <div class="score-block">
+                    <div class="score-value" id="bandwithDisplay">100%</div>
+                    <div class="score-label">Bande Passante Libre</div>
+                </div>
+                <div class="divider"></div>
+                <div class="score-block">
+                    <div class="score-value" id="costDisplay">0%</div>
+                    <div class="score-label">Coût de Switch</div>
+                </div>
+            </div>
+            <div class="score-verdict" id="scoreVerdict">Esprit Clair & Focalisé</div>
+            <div class="score-feedback" id="scoreFeedback">Ajustez les curseurs ci-dessous pour simuler votre charge
+                mentale actuelle.</div>
+        </div>
+
+        <div class="input-group">
+            <div class="input-header">
+                <span class="input-title">Projets simultanés actifs</span>
+                <span class="input-count" id="valProjects">1</span>
+            </div>
+            <span class="input-desc">Nombre de sujets différents exigeant votre responsabilité cette semaine (pro et
+                perso importants).</span>
+            <input type="range" id="inputProjects" min="1" max="10" value="1">
+        </div>
+
+        <div class="input-group">
+            <div class="input-header">
+                <span class="input-title">Onglets & boucles ouvertes</span>
+                <span class="input-count" id="valTabs">3</span>
+            </div>
+            <span class="input-desc">Tâches laissées en plan, applications de messagerie actives, fenêtres de navigateur
+                et idées non notées.</span>
+            <input type="range" id="inputTabs" min="1" max="40" value="3">
+        </div>
+
+        <div class="input-group">
+            <div class="input-header">
+                <span class="input-title">Interruptions / Heure</span>
+                <span class="input-count" id="valInterrupts">0</span>
+            </div>
+            <span class="input-desc">Notifications, collègues, emails reçus ou auto-distractions (réflexe de checker son
+                téléphone).</span>
+            <input type="range" id="inputInterrupts" min="0" max="15" value="0">
+        </div>
+    </div>
+
+    <script>
+        const inputProjects = document.getElementById('inputProjects');
+        const inputTabs = document.getElementById('inputTabs');
+        const inputInterrupts = document.getElementById('inputInterrupts');
+
+        const valProjects = document.getElementById('valProjects');
+        const valTabs = document.getElementById('valTabs');
+        const valInterrupts = document.getElementById('valInterrupts');
+
+        const bandwithDisplay = document.getElementById('bandwithDisplay');
+        const costDisplay = document.getElementById('costDisplay');
+        const scoreVerdict = document.getElementById('scoreVerdict');
+        const scoreFeedback = document.getElementById('scoreFeedback');
+
+        function calculateMetrics() {
+            const p = parseInt(inputProjects.value);
+            const t = parseInt(inputTabs.value);
+            const i = parseInt(inputInterrupts.value);
+
+            // Mise à jour des badges numériques
+            valProjects.textContent = p;
+            valTabs.textContent = t;
+            valInterrupts.textContent = i;
+
+            // Modèle mathématique du coût du Task-Switching
+            // Plus les facteurs grimpent, plus le coût augmente de façon exponentielle/cumulative
+            let switchingCost = (p - 1) * 8 + (t * 1.5) + (i * 4);
+
+            // Normalisation entre 0 et 100
+            switchingCost = Math.min(Math.max(Math.round(switchingCost), 0), 100);
+            let remainingBandwidth = 100 - switchingCost;
+
+            // Affichage des chiffres
+            costDisplay.textContent = `${switchingCost}%`;
+            bandwithDisplay.textContent = `${remainingBandwidth}%`;
+
+            // Logique de feedback adaptative et attribution des couleurs
+            if (switchingCost <= 25) {
+                costDisplay.style.color = "var(--text-muted)";
+                bandwithDisplay.style.color = "var(--optimal)";
+                scoreVerdict.textContent = "Zone d'Hyper-Focus";
+                scoreVerdict.style.color = "var(--optimal)";
+                scoreFeedback.textContent = "Votre cerveau conserve sa pleine puissance de calcul. Idéal pour s'attaquer aux sujets complexes.";
+            } else if (switchingCost <= 55) {
+                costDisplay.style.color = "var(--warning)";
+                bandwithDisplay.style.color = "var(--text)";
+                scoreVerdict.textContent = "Attention Fragmentée";
+                scoreVerdict.style.color = "var(--warning)";
+                scoreFeedback.textContent = "Changer de tâche commence à vous coûter de l'énergie. Limitez les notifications pour ne pas saturer votre mémoire de travail.";
+            } else if (switchingCost <= 80) {
+                costDisplay.style.color = "var(--danger)";
+                bandwithDisplay.style.color = "var(--danger)";
+                scoreVerdict.textContent = "Surcharge Cognitive Modérée";
+                scoreVerdict.style.color = "var(--danger)";
+                scoreFeedback.textContent = "Le phénomène de 'résidu d'attention' est fort : votre esprit est encore bloqué sur la tâche précédente quand vous passez à la suivante.";
+            } else {
+                costDisplay.style.color = "var(--danger)";
+                bandwithDisplay.style.color = "var(--danger)";
+                scoreVerdict.textContent = "Faillite Attentionnelle (Burnout de fond)";
+                scoreVerdict.style.color = "var(--danger)";
+                scoreFeedback.textContent = "Bande passante saturée. Vous perdez l'essentiel de votre temps dans la friction du redémarrage mental. Fermez tout, isolez un seul projet.";
+            }
+        }
+
+        // Écouteurs d'événements pour le calcul en temps réel
+        [inputProjects, inputTabs, inputInterrupts].forEach(input => {
+            input.addEventListener('input', calculateMetrics);
+        });
+
+        // Lancement initial
+        calculateMetrics();
+    </script>
+
+</body>
+
+</html>

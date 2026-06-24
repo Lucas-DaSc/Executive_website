@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indicateur Nuancé de Volume Acoustique</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --surface: #f8fafc;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --accent: #2563eb;
+            --accent-light: #eff6ff;
+            --radius: 8px;
+            --transition: all 0.2s ease-in-out;
+
+            /* Spectre de couleurs nuancé (Vert -> Menthe -> Jaune -> Orange -> Rouge) */
+            --db-silence: #059669;
+            --db-calm: #10b981;
+            --db-ambient: #84cc16;
+            --db-moderate: #eab308;
+            --db-loud: #f97316;
+            --db-saturation: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 640px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: calc(var(--radius) * 2);
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+        }
+
+        header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .live-audit {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn-audio {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-audio:hover {
+            opacity: 0.9;
+        }
+
+        .btn-audio.listening {
+            background-color: var(--db-saturation);
+        }
+
+        .db-display {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1;
+            margin: 1rem 0 0.5rem 0;
+            color: var(--text-muted);
+            font-variant-numeric: tabular-nums;
+            display: none;
+        }
+
+        .gauge-container {
+            width: 100%;
+            height: 10px;
+            background-color: var(--border);
+            border-radius: 5px;
+            margin-top: 1rem;
+            overflow: hidden;
+            display: none;
+        }
+
+        .gauge-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--db-calm);
+            transition: width 0.06s linear;
+            /* Réactivité ultra-rapide */
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .levels-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .level-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .level-card:hover {
+            background-color: var(--surface);
+        }
+
+        .level-card.selected {
+            background-color: var(--accent-light);
+            border-color: var(--accent);
+        }
+
+        .level-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .level-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .level-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .level-badge {
+            font-size: 1rem;
+            font-weight: 700;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .diagnostic-box {
+            margin-top: 2rem;
+            padding: 1.25rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background-color: var(--surface);
+            display: none;
+        }
+
+        .diagnostic-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .diagnostic-text {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Micro-Audit Microphonique & Focus</h1>
+            <p class="subtitle">Analyse haute sensibilité des micro-variations sonores de votre espace</p>
+        </header>
+
+        <div class="live-audit">
+            <button class="btn-audio" id="audioBtn">Activer le capteur haute sensibilité</button>
+            <div class="db-display" id="dbDisplay">-- dB</div>
+            <div class="gauge-container" id="gaugeContainer">
+                <div class="gauge-bar" id="gaugeBar"></div>
+            </div>
+        </div>
+
+        <div class="section-title">Référentiel des micro-nuances :</div>
+        <div class="levels-grid" id="levelsGrid"></div>
+
+        <div class="diagnostic-box" id="diagnosticBox">
+            <div class="diagnostic-title" id="diagTitle">Impact Cognitif</div>
+            <div class="diagnostic-text" id="diagText">Démarrez le capteur pour analyser les micro-nuances de votre
+                environnement.</div>
+        </div>
+    </div>
+
+    <script>
+        // Grille de nuances ultra-resserrée pour capturer la réalité intérieure fine
+        const dbLevels = [
+            { min: 0, max: 34, title: "Silence Profond / Ininterrompu", context: "Idéal pour l'ancrage initial en Deep Work. Hyper-focus spontané.", color: "var(--db-silence)" },
+            { min: 35, max: 41, title: "Zone de Focus Neutre", context: "Chambre calme, bruits mécaniques continus très faibles. Effort d'isolation nul.", color: "var(--db-calm)" },
+            { min: 42, max: 48, title: "Calme Vivant (Activité Légère)", context: "Frappes légères de clavier, clics de souris, respiration.", color: "var(--db-ambient)" },
+            { min: 49, max: 55, title: "Ambiance Tempérée", context: "Murmures, ventilateur d'ordinateur proche, bruits de pas feutrés.", color: "var(--db-moderate)" },
+            { min: 56, max: 64, title: "Zone de Friction Cognitive", context: "Discussions audibles à proximité, fond sonore continu d'un open space.", color: "var(--db-loud)" },
+            { min: 65, max: 120, title: "Rupture d'Attention Immédiate", context: "Rires, appels téléphoniques à voix haute, bruits de tasses ou de portes.", color: "var(--db-saturation)" }
+        ];
+
+        const levelsGrid = document.getElementById('levelsGrid');
+        const diagnosticBox = document.getElementById('diagnosticBox');
+        const diagTitle = document.getElementById('diagTitle');
+        const diagText = document.getElementById('diagText');
+        const audioBtn = document.getElementById('audioBtn');
+        const dbDisplay = document.getElementById('dbDisplay');
+        const gaugeContainer = document.getElementById('gaugeContainer');
+        const gaugeBar = document.getElementById('gaugeBar');
+
+        let audioContext = null, analyser = null, microphone = null, javascriptNode = null, isListening = false;
+
+        function initLevels() {
+            dbLevels.forEach((level, index) => {
+                const card = document.createElement('div');
+                card.classList.add('level-card');
+                card.innerHTML = `
+                <div class="level-info">
+                    <div class="level-title">${level.title}</div>
+                    <div class="level-desc">${level.context}</div>
+                </div>
+                <div class="level-badge" style="color: ${level.color}">${level.max === 120 ? '> 65' : level.min + '-' + level.max} dB</div>
+            `;
+                card.addEventListener('click', () => {
+                    if (isListening) stopAudioAnalysis();
+                    document.querySelectorAll('.level-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    updateDiagnostic(level.title, level.context, level.color);
+                });
+                levelsGrid.appendChild(card);
+            });
+        }
+
+        function updateDiagnostic(title, text, color) {
+            diagnosticBox.style.display = 'block';
+            diagnosticBox.style.borderColor = color;
+            diagTitle.textContent = title;
+            diagTitle.style.color = color;
+            diagText.textContent = text;
+        }
+
+        audioBtn.addEventListener('click', async () => {
+            isListening ? stopAudioAnalysis() : await startAudioAnalysis();
+        });
+
+        async function startAudioAnalysis() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                isListening = true;
+                audioBtn.textContent = "Désactiver le capteur";
+                audioBtn.classList.add('listening');
+                dbDisplay.style.display = 'block';
+                gaugeContainer.style.display = 'block';
+                document.querySelectorAll('.level-card').forEach(c => c.classList.remove('selected'));
+
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                microphone = audioContext.createMediaStreamSource(stream);
+                javascriptNode = audioContext.createScriptProcessor(1024, 1, 1);
+
+                analyser.smoothingTimeConstant = 0.2; // Capture nerveuse des pics rapides (ex: frappe de touche)
+                analyser.fftSize = 1024;
+
+                microphone.connect(analyser);
+                analyser.connect(javascriptNode);
+                javascriptNode.connect(audioContext.destination);
+
+                javascriptNode.onaudioprocess = () => {
+                    const array = new Uint8Array(analyser.frequencyBinCount);
+                    analyser.getByteFrequencyData(array);
+
+                    // Calcul de l'énergie moyenne du spectre
+                    let totalEnergy = 0;
+                    for (let i = 0; i < array.length; i++) {
+                        totalEnergy += array[i];
+                    }
+                    const averageEnergy = totalEnergy / array.length;
+
+                    // Cartographie mathématique ultra-sensible resserrée sur la dynamique 30dB - 70dB
+                    let estimatedDb = 30;
+                    if (averageEnergy > 0) {
+                        estimatedDb = Math.round(30 + (averageEnergy * 0.75));
+                    }
+
+                    // Capuchon réaliste
+                    if (estimatedDb > 75) estimatedDb = 75;
+
+                    displayLiveMetrics(estimatedDb);
+                };
+            } catch (err) {
+                alert("Accès micro refusé ou indisponible.");
+            }
+        }
+
+        function stopAudioAnalysis() {
+            isListening = false;
+            audioBtn.textContent = "Activer le capteur haute sensibilité";
+            audioBtn.classList.remove('listening');
+            if (audioContext) {
+                microphone.disconnect(); analyser.disconnect(); javascriptNode.disconnect(); audioContext.close();
+            }
+        }
+
+        function displayLiveMetrics(db) {
+            dbDisplay.textContent = `${db} dB`;
+            const level = dbLevels.find(l => db >= l.min && db <= l.max) || dbLevels[dbLevels.length - 1];
+            dbDisplay.style.color = level.color;
+
+            // Jauge étalonnée sur la plage utile (30 dB = 0%, 70 dB = 100%)
+            let percent = ((db - 30) / (70 - 30)) * 100;
+            percent = Math.max(0, Math.min(percent, 100));
+
+            gaugeBar.style.width = `${percent}%`;
+            gaugeBar.style.backgroundColor = level.color;
+            updateDiagnostic(`Actuel : ${db} dB — ${level.title}`, level.context, level.color);
+        }
+
+        initLevels();
+    </script>
+</body>
+
+</html>
