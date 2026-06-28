@@ -14,8 +14,8 @@
             --text-muted: #64748b;
             --accent: #2563eb;
             --accent-light: #eff6ff;
-            --radius: 8px;
-            --transition: all 0.2s ease-in-out;
+            --radius: 12px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
             /* Indicateurs de charge cognitive */
             --optimal: #10b981;
@@ -28,12 +28,13 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
         body {
-            background-color: var(--bg);
+            background-color: #f1f5f9;
             color: var(--text);
-            padding: 2rem 1rem;
+            padding: 4rem 1rem;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -42,22 +43,23 @@
 
         .container {
             width: 100%;
-            max-width: 640px;
+            max-width: 680px;
             background: var(--bg);
             border: 1px solid var(--border);
-            border-radius: calc(var(--radius) * 2);
-            padding: 2rem;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+            border-radius: calc(var(--radius) * 1.5);
+            padding: 3rem;
+            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
         }
 
         header {
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             text-align: center;
         }
 
         h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 1.75rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
             margin-bottom: 0.5rem;
             color: var(--text);
         }
@@ -67,12 +69,49 @@
             font-size: 0.95rem;
         }
 
+        /* Section Explicative Premium */
+        .premium-explainer {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding-bottom: 2.5rem;
+            margin-bottom: 2.5rem;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        @media (max-width: 520px) {
+            .premium-explainer {
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
+            }
+        }
+
+        .concept-block {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .concept-tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent);
+        }
+
+        .concept-text {
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
         /* Panneau de Résultats (Score) */
         .score-card {
             background-color: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 1.5rem;
+            padding: 2rem;
             text-align: center;
             margin-bottom: 2.5rem;
             transition: var(--transition);
@@ -82,7 +121,7 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
         }
 
         .score-block {
@@ -90,15 +129,16 @@
         }
 
         .score-value {
-            font-size: 2.75rem;
+            font-size: 3.25rem;
             font-weight: 800;
             line-height: 1;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.35rem;
+            letter-spacing: -0.02em;
         }
 
         .score-label {
-            font-size: 0.85rem;
-            font-weight: 600;
+            font-size: 0.8rem;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             color: var(--text-muted);
@@ -106,20 +146,22 @@
 
         .divider {
             width: 1px;
-            height: 50px;
+            height: 60px;
             background-color: var(--border);
         }
 
         .score-verdict {
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.35rem;
         }
 
         .score-feedback {
-            font-size: 0.85rem;
+            font-size: 0.875rem;
             color: var(--text-muted);
-            line-height: 1.4;
+            line-height: 1.5;
+            max-width: 480px;
+            margin: 0 auto;
         }
 
         /* Formulaire / Sliders */
@@ -127,7 +169,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
-            margin-bottom: 1.75rem;
+            margin-bottom: 2rem;
         }
 
         .input-header {
@@ -145,60 +187,65 @@
             font-size: 0.8rem;
             color: var(--text-muted);
             margin-top: -0.25rem;
+            line-height: 1.4;
         }
 
         .input-count {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--accent);
             background-color: var(--accent-light);
-            padding: 0.1rem 0.5rem;
-            border-radius: 4px;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
             min-width: 45px;
             text-align: center;
         }
 
-        /* 1. Le conteneur global du slider */
         input[type="range"] {
             -webkit-appearance: none;
-            /* Pour Chrome/Safari */
             appearance: none;
-            /* Version standard */
             width: 100%;
             height: 6px;
             background: var(--border);
             border-radius: 3px;
             outline: none;
-            margin: 0.5rem 0;
+            margin: 0.75rem 0;
         }
 
-        /* 2. Le bouton (Thumb) - Version WebKit (Chrome, Safari, Edge) */
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             background: var(--accent);
+            box-shadow: 0 2px 4px rgb(37 99 235 / 0.2);
             cursor: pointer;
             transition: var(--transition);
-            /* Astuce : centre le bouton verticalement si la piste est très fine */
-            margin-top: -6px;
+            margin-top: -7px;
         }
 
-        /* 3. Le bouton (Thumb) - Version Firefox */
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            background: #1d4ed8;
+        }
+
         input[type="range"]::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             border: none;
-            /* Firefox ajoute une bordure par défaut */
             border-radius: 50%;
             background: var(--accent);
+            box-shadow: 0 2px 4px rgb(37 99 235 / 0.2);
             cursor: pointer;
             transition: var(--transition);
         }
 
-        /* Bonus : Optionnel mais recommandé pour Firefox (la piste) */
+        input[type="range"]::-moz-range-thumb:hover {
+            transform: scale(1.1);
+            background: #1d4ed8;
+        }
+
         input[type="range"]::-moz-range-track {
             width: 100%;
             height: 6px;
@@ -212,9 +259,24 @@
 
     <div class="container">
         <header>
-            <h1>Calculateur de Bande Passante Mentale</h1>
-            <p class="subtitle">Mesurez l'indice de coût de votre switch attentionnel (Task-Switching Cost)</p>
+            <h1>Bande Passante Mentale</h1>
+            <p class="subtitle">Indice d'efficience cognitive & coût du switch attentionnel</p>
         </header>
+
+        <!-- Section explicative premium intégrée au-dessus du score -->
+        <div class="premium-explainer">
+            <div class="concept-block">
+                <span class="concept-tag">La Bande Passante</span>
+                <p class="concept-text">C’est la capacité maximale de votre mémoire de travail à un instant T. Un espace
+                    mental fixe, saturé dès que vous multipliez les boucles ouvertes et les projets complexes.</p>
+            </div>
+            <div class="concept-block">
+                <span class="concept-tag">Le Task-Switching</span>
+                <p class="concept-text">Le cerveau ne sait pas paralléliser. Sauter d'un sujet à un autre force un
+                    redémarrage attentionnel coûteux, laissant derrière lui un « résidu d'attention » qui fragmente vos
+                    ressources.</p>
+            </div>
+        </div>
 
         <div class="score-card">
             <div class="score-flex">
@@ -283,24 +345,18 @@
             const t = parseInt(inputTabs.value);
             const i = parseInt(inputInterrupts.value);
 
-            // Mise à jour des badges numériques
             valProjects.textContent = p;
             valTabs.textContent = t;
             valInterrupts.textContent = i;
 
-            // Modèle mathématique du coût du Task-Switching
-            // Plus les facteurs grimpent, plus le coût augmente de façon exponentielle/cumulative
             let switchingCost = (p - 1) * 8 + (t * 1.5) + (i * 4);
 
-            // Normalisation entre 0 et 100
             switchingCost = Math.min(Math.max(Math.round(switchingCost), 0), 100);
             let remainingBandwidth = 100 - switchingCost;
 
-            // Affichage des chiffres
             costDisplay.textContent = `${switchingCost}%`;
             bandwithDisplay.textContent = `${remainingBandwidth}%`;
 
-            // Logique de feedback adaptative et attribution des couleurs
             if (switchingCost <= 25) {
                 costDisplay.style.color = "var(--text-muted)";
                 bandwithDisplay.style.color = "var(--optimal)";
@@ -328,12 +384,10 @@
             }
         }
 
-        // Écouteurs d'événements pour le calcul en temps réel
         [inputProjects, inputTabs, inputInterrupts].forEach(input => {
             input.addEventListener('input', calculateMetrics);
         });
 
-        // Lancement initial
         calculateMetrics();
     </script>
 

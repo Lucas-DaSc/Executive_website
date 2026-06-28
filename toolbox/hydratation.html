@@ -141,7 +141,6 @@
             color: var(--text);
         }
 
-        /* Classes dynamiques pour le statut du Focus */
         .result-box.good .value {
             color: var(--success);
         }
@@ -195,8 +194,7 @@
 
     <div class="calculator-card">
         <h2>Hydratation & Focus Cognitif</h2>
-        <p class="subtitle">Suivez l'impact direct de votre consommation d'eau en temps réel sur vos capacités
-            cérébrales.</p>
+        <p class="subtitle">Suivez l'impact de votre consommation d'eau personnalisée sur vos capacités cérébrales.</p>
 
         <div class="input-row">
             <div class="input-group">
@@ -206,6 +204,23 @@
             <div class="input-group">
                 <label for="consumed">Eau bue (Litres)</label>
                 <input type="number" id="consumed" value="1.2" min="0" max="10" step="0.1">
+            </div>
+        </div>
+
+        <div class="input-row">
+            <div class="input-group">
+                <label for="gender">Sexe biologique</label>
+                <select id="gender">
+                    <option value="male">Homme</option>
+                    <option value="female">Femme</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="climate">Climat ambiant</label>
+                <select id="climate">
+                    <option value="temperate">Tempéré / Frais</option>
+                    <option value="hot">Chaud / Sec (>25°C)</option>
+                </select>
             </div>
         </div>
 
@@ -222,7 +237,7 @@
             <div class="result-grid">
                 <div class="result-box">
                     <div class="label">Requis / Différentiel</div>
-                    <div class="value" id="water-diff">2.45 L</div>
+                    <div class="value" id="water-diff">--</div>
                 </div>
                 <div class="result-box" id="focus-box">
                     <div class="label">Focus Cognitif</div>
@@ -232,8 +247,7 @@
 
             <div id="status-container" class="status-box status-danger">
                 <div class="status-icon" id="status-icon">⚠️</div>
-                <div id="status-text">
-                </div>
+                <div id="status-text"></div>
             </div>
         </div>
     </div>
@@ -241,6 +255,8 @@
     <script>
         const weightInput = document.getElementById('weight');
         const consumedInput = document.getElementById('consumed');
+        const genderSelect = document.getElementById('gender');
+        const climateSelect = document.getElementById('climate');
         const activitySelect = document.getElementById('activity');
 
         const waterDiffDisplay = document.getElementById('water-diff');
@@ -261,12 +277,20 @@
                 return;
             }
 
-            // 1. Calcul du besoin théorique (ml)
-            let activityFactor = 35;
-            if (activitySelect.value === 'moderate') activityFactor = 40;
-            if (activitySelect.value === 'intense') activityFactor = 45;
+            // 1. Calcul du besoin de base selon le sexe (mL par kg)
+            // Les hommes ont en moyenne un ratio de masse musculaire plus élevé (besoin en eau accru)
+            let baseFactor = genderSelect.value === 'female' ? 30 : 35;
 
-            const waterRequired = (weight * activityFactor) / 1000; // En Litres
+            // Ajustement selon l'activité physique
+            if (activitySelect.value === 'moderate') baseFactor += 5;
+            if (activitySelect.value === 'intense') baseFactor += 10;
+
+            let waterRequired = (weight * baseFactor) / 1000; // Conversion en Litres
+
+            // Ajustement selon le climat (pertes par transpiration/respiration)
+            if (climateSelect.value === 'hot') {
+                waterRequired += 0.75; // Ajout forfaitaire de 0.75L si climat chaud
+            }
 
             // 2. Calcul du différentiel
             const diff = consumed - waterRequired;
@@ -278,49 +302,50 @@
                 waterDiffDisplay.innerHTML = `${waterRequired.toFixed(2)}L <span style="font-size:0.8rem; font-weight:normal; color:var(--success);">(Atteint)</span>`;
             }
 
-            // 3. Calcul mathématique de l'impact sur le focus cognitif
-            // Règle : Perte de 2% du poids corporel en eau = -20% de concentration.
-            // Donc, 1% de perte de poids corporel en eau = -10% de concentration.
-
+            // 3. Calcul de l'impact sur le focus cognitif
             let focusScore = 100;
             let statusHTML = "";
 
             if (diff < 0) {
-                const waterDeficitKg = Math.abs(diff); // 1L d'eau = 1kg
-                const bodyLossPercentage = (waterDeficitKg / weight) * 100; // % de perte de poids en eau
+                const waterDeficitKg = Math.abs(diff);
+                const bodyLossPercentage = (waterDeficitKg / weight) * 100;
 
-                // Calcul de la baisse de focus (1% perte = -10% focus)
+                // Règle : 1% de perte de poids corporel en eau = -10% de concentration
                 const focusDrop = bodyLossPercentage * 10;
-                focusScore = Math.max(80, 100 - focusDrop); // On capte la baisse à -20% max selon la règle énoncée
+                focusScore = Math.max(80, 100 - focusDrop); // Capé à -20% max selon la logique de base
 
-                // Gestion du design du Focus Box en fonction de la sévérité
                 focusBox.className = "result-box";
                 if (bodyLossPercentage >= 2) {
                     focusBox.classList.add("danger");
                     statusContainer.className = "status-box status-danger";
                     statusIcon.textContent = "🚨";
-                    statusHTML = `<strong>Déshydratation cérébrale !</strong> Vous avez perdu plus de 2% de votre masse en eau. Votre concentration est amputée de <strong>-${(100 - focusScore).toFixed(0)}%</strong>. Buvez immédiatement.`;
+                    statusHTML = `<strong>Déshydratation cérébrale !</strong> Vos besoins personnalisés ne sont pas remplis. Votre concentration est amputée de <strong>-${(100 - focusScore).toFixed(0)}%</strong>. Buvez immédiatement.`;
                 } else if (bodyLossPercentage > 0.5) {
                     focusBox.classList.add("warning");
-                    statusContainer.className = "status-box status-danger"; // Garde le style d'alerte léger
-                    statusContainer.style.borderColor = "#fef3c7";
+                    statusContainer.className = "status-box";
+                    statusContainer.style.border = "1px solid #fef3c7";
                     statusContainer.style.backgroundColor = "#fffbeb";
                     statusContainer.style.color = "#92400e";
                     statusIcon.textContent = "⚠️";
-                    statusHTML = `<strong>Focus en baisse :</strong> Manque d'eau détecté. Votre niveau de concentration baisse de <strong>-${(100 - focusScore).toFixed(0)}%</strong>.`;
+                    statusHTML = `<strong>Focus en baisse :</strong> Manque d'eau détecté selon votre profil. Votre niveau de concentration baisse de <strong>-${(100 - focusScore).toFixed(0)}%</strong>.`;
                 } else {
                     focusBox.className = "result-box";
                     statusContainer.className = "status-box status-success";
+                    statusContainer.style.border = "";
+                    statusContainer.style.backgroundColor = "";
+                    statusContainer.style.color = "";
                     statusIcon.textContent = "💧";
-                    statusHTML = `Vous êtes proche de votre objectif. Hydratation correcte, impact cognitif minime.`;
+                    statusHTML = `Vous êtes proche de votre objectif personnalisé. Hydratation correcte.`;
                 }
             } else {
-                // Hydratation optimale ou supérieure
                 focusScore = 100;
                 focusBox.className = "result-box good";
                 statusContainer.className = "status-box status-success";
+                statusContainer.style.border = "";
+                statusContainer.style.backgroundColor = "";
+                statusContainer.style.color = "";
                 statusIcon.textContent = "✨";
-                statusHTML = `<strong>Focus Optimal !</strong> Votre cerveau dispose de toute l'eau nécessaire pour fonctionner à 100% de ses capacités.`;
+                statusHTML = `<strong>Focus Optimal !</strong> Prise en compte de votre profil réussie. Votre cerveau dispose de toute l'eau nécessaire.`;
             }
 
             focusScoreDisplay.textContent = `${focusScore.toFixed(0)}%`;
@@ -330,6 +355,8 @@
         // Écouteurs d'événements
         weightInput.addEventListener('input', updateMetrics);
         consumedInput.addEventListener('input', updateMetrics);
+        genderSelect.addEventListener('change', updateMetrics);
+        climateSelect.addEventListener('change', updateMetrics);
         activitySelect.addEventListener('change', updateMetrics);
 
         // Initialisation

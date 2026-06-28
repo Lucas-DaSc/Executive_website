@@ -47,6 +47,36 @@
             padding: 40px;
         }
 
+        /* --- NOUVELLE SECTION EXPLICATIVE CLEAN --- */
+        .info-card {
+            background-color: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            margin-bottom: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .info-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .info-row svg {
+            flex-shrink: 0;
+            margin-top: 2px;
+            color: var(--accent);
+        }
+
+        .info-row strong {
+            color: var(--text);
+        }
+
         /* Système d'onglets épuré */
         .tabs {
             display: flex;
@@ -221,6 +251,29 @@
 <body>
 
     <div class="container">
+        <!-- Section informative stylisée -->
+        <div class="info-card">
+            <div class="info-row">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
+                    <line x1="16" y1="8" x2="2" y2="22"></line>
+                    <line x1="17.5" y1="15" x2="9" y2="15"></line>
+                </svg>
+                <span><strong>Chronotype Qualitatif :</strong> Explore vos traits de personnalité, votre tempérament et
+                    vos préférences comportementales globales (Méthode Breus).</span>
+            </div>
+            <div class="info-row">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span><strong>Chronotype Quantitatif :</strong> Calcule mathématiquement votre profil biologique réel
+                    basé sur l'analyse précise de vos horaires de sommeil (MCTQ).</span>
+            </div>
+        </div>
+
         <!-- Onglets de navigation -->
         <div class="tabs">
             <button class="tab-btn active" id="tab-breus" onclick="switchTest('breus')">Test Qualitatif (Breus)</button>

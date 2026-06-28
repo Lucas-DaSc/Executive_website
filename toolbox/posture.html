@@ -148,6 +148,15 @@
             background: var(--bg);
             border: 1px solid var(--border);
             color: var(--text-muted);
+            cursor: pointer;
+            /* Ajout du curseur pour indiquer que c'est cliquable */
+            user-select: none;
+            transition: var(--transition);
+        }
+
+        .indicator-tag:hover {
+            border-color: var(--text-muted);
+            background: var(--surface);
         }
 
         .indicator-tag.active {
@@ -295,7 +304,6 @@
             color: var(--text-muted);
         }
 
-        /* Formatage de l'image externe */
         .exe-img {
             width: 250px;
             height: 250px;
@@ -326,7 +334,8 @@
         <div class="card">
             <h2>1. Cartographie Anatomique des Douleurs</h2>
             <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">Cliquez précisément sur les
-                muscles ou articulations qui tirent ou se bloquent durant vos sessions de travail.</p>
+                muscles ou sur les badges textuels ci-dessous qui tirent durant vos sessions de travail.
+            </p>
 
             <div class="body-selector">
                 <div class="body-view">
@@ -377,18 +386,19 @@
             </div>
 
             <div class="zone-indicators">
-                <span class="indicator-tag" id="tag-trapeze">Trapèzes</span>
-                <span class="indicator-tag" id="tag-epaules">Épaules</span>
-                <span class="indicator-tag" id="tag-dos">Grand Dorsal</span>
-                <span class="indicator-tag" id="tag-lombaires">Lombaires</span>
-                <span class="indicator-tag" id="tag-pectoraux">Pectoraux</span>
-                <span class="indicator-tag" id="tag-abdos">Abdos</span>
-                <span class="indicator-tag" id="tag-bras">Bras</span>
-                <span class="indicator-tag" id="tag-avantbras">Avant-bras</span>
-                <span class="indicator-tag" id="tag-fessiers">Fessiers</span>
-                <span class="indicator-tag" id="tag-quadriceps">Quadriceps</span>
-                <span class="indicator-tag" id="tag-ischios">Ischios</span>
-                <span class="indicator-tag" id="tag-mollets">Mollets</span>
+                <!-- Ajout d'un attribut data-target pour faire le lien facilement en JS -->
+                <span class="indicator-tag" id="tag-trapeze" data-target="trapeze">Trapèzes</span>
+                <span class="indicator-tag" id="tag-epaules" data-target="epaules">Épaules</span>
+                <span class="indicator-tag" id="tag-dos" data-target="dos">Grand Dorsal</span>
+                <span class="indicator-tag" id="tag-lombaires" data-target="lombaires">Lombaires</span>
+                <span class="indicator-tag" id="tag-pectoraux" data-target="pectoraux">Pectoraux</span>
+                <span class="indicator-tag" id="tag-abdos" data-target="abdos">Abdos</span>
+                <span class="indicator-tag" id="tag-bras" data-target="bras">Bras</span>
+                <span class="indicator-tag" id="tag-avantbras" data-target="avantbras">Avant-bras</span>
+                <span class="indicator-tag" id="tag-fessiers" data-target="fessiers">Fessiers</span>
+                <span class="indicator-tag" id="tag-quadriceps" data-target="quadriceps">Quadriceps</span>
+                <span class="indicator-tag" id="tag-ischios" data-target="ischios">Ischios</span>
+                <span class="indicator-tag" id="tag-mollets" data-target="mollets">Mollets</span>
             </div>
         </div>
 
@@ -440,7 +450,6 @@
             habitudes: { laptop: false, double: false, mouse: false, sitting: false }
         };
 
-        // Banque enrichie avec images Unsplash stables et durables
         const protocoles = {
             hautCroise: {
                 titre: "L'Oiseau de Chasse (Trapèzes / Épaules / Pectoraux)",
@@ -492,16 +501,36 @@
             }
         };
 
+        // Fonction globale de bascule pour synchroniser le SVG et le mot cliqué
+        function toggleMuscleSelection(muscleName) {
+            // Inverse l'état dans le diagnostic
+            diagnostic.muscles[muscleName] = !diagnostic.muscles[muscleName];
+
+            // Met à jour les parties du corps correspondantes dans les deux SVG
+            document.querySelectorAll(`.muscle[data-muscle="${muscleName}"]`).forEach(el => {
+                el.classList.toggle('selected', diagnostic.muscles[muscleName]);
+            });
+
+            // Met à jour l'état du badge textuel en bas
+            const tagElement = document.getElementById(`tag-${muscleName}`);
+            if (tagElement) {
+                tagElement.classList.toggle('active', diagnostic.muscles[muscleName]);
+            }
+        }
+
+        // Écouteur d'événement sur le modèle SVG (corps humain)
         document.querySelectorAll('.muscle').forEach(muscleElement => {
             muscleElement.addEventListener('click', function () {
                 const muscleName = this.getAttribute('data-muscle');
-                diagnostic.muscles[muscleName] = !diagnostic.muscles[muscleName];
+                toggleMuscleSelection(muscleName);
+            });
+        });
 
-                document.querySelectorAll(`.muscle[data-muscle="${muscleName}"]`).forEach(el => {
-                    el.classList.toggle('selected', diagnostic.muscles[muscleName]);
-                });
-
-                document.getElementById(`tag-${muscleName}`).classList.toggle('active', diagnostic.muscles[muscleName]);
+        // Écouteur d'événement sur les mots / badges textuels
+        document.querySelectorAll('.indicator-tag').forEach(tagElement => {
+            tagElement.addEventListener('click', function () {
+                const muscleName = this.getAttribute('data-target');
+                toggleMuscleSelection(muscleName);
             });
         });
 
@@ -541,7 +570,6 @@
 
             let selected = [];
 
-            // Routage intelligent et affiné grâce aux nouveaux exercices intégrés
             if (diagnostic.muscles.trapeze || diagnostic.habitudes.laptop) {
                 selected.push(protocoles.stretchCou);
             }
@@ -567,7 +595,6 @@
                 selected.push(protocoles.pompeVeineuse);
             }
 
-            // Complétion de sécurité pour garantir 3 exercices uniques
             const fallbacks = [protocoles.hautCroise, protocoles.deverrouillageLombaire, protocoles.glutealAmnesia, protocoles.stretchCou];
             for (let fallback of fallbacks) {
                 if (selected.length >= 3) break;

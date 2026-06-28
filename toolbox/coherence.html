@@ -32,9 +32,10 @@
             color: var(--text);
             min-height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: flex-start;
             align-items: center;
-            padding: 20px;
+            padding: 40px 20px;
         }
 
         .container {
@@ -47,6 +48,7 @@
             text-align: center;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
             position: relative;
+            margin-bottom: 30px;
         }
 
         h1 {
@@ -167,6 +169,51 @@
             opacity: 0.9;
         }
 
+        /* Section Explications Ajoutée */
+        .info-panel {
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+            text-align: left;
+        }
+
+        .info-section {
+            margin-bottom: 20px;
+        }
+
+        .info-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-text {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .info-text ul {
+            margin-top: 8px;
+            padding-left: 20px;
+        }
+
+        .info-text li {
+            margin-bottom: 6px;
+        }
+
         /* Animations de respiration */
         .inhale {
             transform: scale(1.2);
@@ -190,6 +237,7 @@
 
 <body>
 
+    <!-- Application de respiration -->
     <div class="container">
         <h1>Guide Respiratoire HRV</h1>
         <p class="subtitle">Cohérence Cardiaque • Fréquence 0.1Hz</p>
@@ -213,6 +261,43 @@
         </div>
 
         <button class="btn-main" id="startBtn">Commencer la session</button>
+    </div>
+
+    <!-- Panneau explicatif intégré -->
+    <div class="info-panel">
+        <div class="info-section">
+            <div class="info-title">💡 Quel est l'intérêt ?</div>
+            <div class="info-text">
+                Ce guide induit un état de <strong>cohérence cardiaque</strong>, une méthode scientifiquement validée
+                pour réguler le stress :
+                <ul>
+                    <li><strong>Baisse immédiate de l'anxiété :</strong> Réduit la production de cortisol (l'hormone du
+                        stress) au profit de la DHEA (hormone de la jeunesse et de la récupération).</li>
+                    <li><strong>Équilibre nerveux :</strong> Synchronise le système sympathique (accélérateur) et
+                        parasympathique (frein) pour stabiliser l'organisme.</li>
+                    <li><strong>Optimisation de la HRV :</strong> Améliore la variabilité de la fréquence cardiaque,
+                        renforçant la santé cardiovasculaire sur le long terme.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-title">⚙️ Comment ça fonctionne ?</div>
+            <div class="info-text">
+                L'application repose sur un rythme précis de <strong>0.1 Hz</strong>, soit exactement 6 cycles
+                respiratoires par minute :
+                <ul>
+                    <li><strong>Le visuel :</strong> La bulle et l'anneau se déploient de manière parfaitement fluide
+                        sur une durée de 5 secondes à l'inspiration, et se rétractent sur 5 secondes à l'expiration.
+                    </li>
+                    <li><strong>L'audio :</strong> L'API Web Audio génère une onde sinusoïdale pure de 220Hz qui monte
+                        et descend en volume pour accompagner le souffle en douceur, sans surcharger votre connexion.
+                    </li>
+                    <li><strong>Le tactile :</strong> Sur smartphone, de légères vibrations vous indiquent discrètement
+                        les changements de phase pour vous permettre de pratiquer les yeux fermés.</li>
+                </ul>
+            </div>
+        </div>
     </div>
 
     <script>

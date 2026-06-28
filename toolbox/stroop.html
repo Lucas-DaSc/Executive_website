@@ -160,6 +160,8 @@
             cursor: pointer;
             transition: var(--transition);
             color: var(--text);
+            touch-action: manipulation;
+            /* Optimisation mobile pour éliminer le délai de double-tap */
         }
 
         .color-btn:hover {
@@ -213,6 +215,17 @@
             font-weight: 700;
             font-size: 1.1rem;
             margin-bottom: 24px;
+        }
+
+        .device-badge {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            background: var(--border);
+            color: var(--text-muted);
+            border-radius: 20px;
+            font-weight: normal;
         }
 
         .interpretation {
@@ -303,10 +316,14 @@
         let currentCorrectColor = '';
         let isCountdownActive = false;
 
+        // Détection de l'appareil
+        function isMobileDevice() {
+            return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+        }
+
         function startCountdown() {
             switchScreen('welcome-screen', 'game-screen');
 
-            // On fige l'interface des boutons pendant le décompte
             const optionsBlock = document.getElementById('options-block');
             optionsBlock.classList.add('disabled');
             isCountdownActive = true;
@@ -324,7 +341,6 @@
                     display.innerHTML = `<span class="countdown-number" style="color: var(--accent)">Prêt ?</span>`;
                 } else {
                     clearInterval(interval);
-                    // Libération des boutons et lancement du jeu
                     optionsBlock.classList.remove('disabled');
                     isCountdownActive = false;
                     startTest();
@@ -351,12 +367,10 @@
             let colorIndex;
 
             if (Math.random() > 0.5) {
-                // Incongruent
                 do {
                     colorIndex = Math.floor(Math.random() * colorData.length);
                 } while (colorIndex === wordIndex);
             } else {
-                // Congruent
                 colorIndex = wordIndex;
             }
 
@@ -372,7 +386,6 @@
         }
 
         function submitAnswer(chosenColor) {
-            // Sécurité : Impossible de cliquer pendant les 3s de pré-calcul
             if (isCountdownActive) return;
 
             const endTime = performance.now();
@@ -390,8 +403,11 @@
         function calculatePercentile(avgRT, accuracy) {
             if (accuracy < 50 || avgRT === 0) return 0;
 
-            const mean = 820;
-            const stdDev = 130;
+            // Application de normes distinctes Mobile vs PC 
+            // Les utilisateurs sur PC ont un temps d'acheminement mécanique du clic plus long.
+            const isMobile = isMobileDevice();
+            const mean = isMobile ? 740 : 890;   // Seuil moyen ajusté 
+            const stdDev = isMobile ? 120 : 140; // Écart-type ajusté
 
             const zScore = (mean - avgRT) / stdDev;
 
@@ -419,11 +435,12 @@
                 : 0;
 
             const percentile = calculatePercentile(avgRT, accuracyPct);
+            const mobileUsed = isMobileDevice();
 
             const percentileBox = document.getElementById('res-percentile');
             if (accuracyPct >= 60) {
                 percentileBox.style.display = "block";
-                percentileBox.innerHTML = `⚡ Vous avez été plus rapide que <strong>${percentile}%</strong> de la population !`;
+                percentileBox.innerHTML = `⚡ Vous avez été plus rapide que <strong>${percentile}%</strong> de la population ! <br><span class="device-badge">Étalonnage ajusté sur : ${mobileUsed ? '📱 Mobile' : '💻 Ordinateur'}</span>`;
             } else {
                 percentileBox.style.display = "block";
                 percentileBox.innerHTML = `⚠️ Précision trop faible pour évaluer votre vitesse globale.`;
